@@ -43,7 +43,7 @@ npm run dist:win     # Windows-Installer + portable EXE (auf Windows ausführen)
 
 - Dokumentartig im Stil der RFC-Editor-Dokumente: Kopfblock mit Metadaten, nummerierte Abschnitte (A.1, A.2 …), Inhaltsverzeichnis mit Punktführern, Monospace für Metadaten und Daten
 - ein einziger Akzent (Grün), sonst Schwarz/Grau; keine Verläufe, Schatten, Emoji oder Effekte
-- Hell/Dunkel folgt Windows (oder fest einstellbar); die Titelleiste wird mitgeführt
+- Dunkelmodus: folgt standardmäßig Windows; Umschalter „Schema“ in der Titelleiste (System → Hell → Dunkel) oder unter Einstellungen; die Titelleiste wird mitgeführt
 - Windows-App mit eigener Titelleiste und nativen Fensterknöpfen (`titleBarOverlay`, Snap-Layouts bleiben erhalten), optional Mica ab Windows 11 22H2 (standardmäßig aus)
 - Strg+K: Suche über alle Stationen
 

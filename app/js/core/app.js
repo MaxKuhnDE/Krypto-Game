@@ -404,9 +404,12 @@
   }
 
   // ------------------------------------------------------------------ Darstellung
+  const THEME_LABEL = { system: 'System', light: 'Hell', dark: 'Dunkel' };
   KQ.applyTheme = () => {
     const st = S.settings();
     const de = document.documentElement;
+    const tbtn = document.getElementById('btn-theme');
+    if (tbtn) tbtn.textContent = 'Schema: ' + (THEME_LABEL[st.theme] || 'System');
     if (st.theme === 'system') de.removeAttribute('data-theme'); else de.setAttribute('data-theme', st.theme);
     de.classList.toggle('reduce-motion', !!st.reduceMotion);
     const mica = !!(root.kqNative && root.kqNative.micaSupported && st.mica);
@@ -423,6 +426,13 @@
     if (root.kqNative) document.documentElement.classList.add('electron');
     KQ.applyTheme();
     matchMedia('(prefers-color-scheme: dark)').addEventListener('change', KQ.applyTheme);
+    document.getElementById('btn-theme')?.addEventListener('click', () => {
+      const order = ['system', 'light', 'dark'];
+      const cur = order.indexOf(S.settings().theme);
+      S.setSetting('theme', order[(cur + 1) % order.length]);
+      KQ.applyTheme();
+      if (parseHash().page === 'settings') render(); // Auswahl in den Einstellungen nachziehen
+    });
     document.getElementById('btn-nav').addEventListener('click', () => {
       const sh = document.querySelector('.shell');
       if (innerWidth < 820) sh.classList.toggle('nav-open'); else sh.classList.toggle('nav-collapsed');
