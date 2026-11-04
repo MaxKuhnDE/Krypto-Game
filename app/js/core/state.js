@@ -8,7 +8,7 @@
 
   const fresh = () => ({
     version: 1, xp: 0, solved: {}, quiz: {}, visited: {}, badges: {},
-    settings: { theme: 'system', reduceMotion: false, mica: false },
+    settings: { theme: 'system', reduceMotion: false, mica: false, autoUpdateCheck: true },
     stats: { examBest: 0, examRuns: 0, quizRight: 0, quizWrong: 0 },
     last: null,
   });

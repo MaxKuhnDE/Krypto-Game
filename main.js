@@ -3,6 +3,7 @@
 const { app, BrowserWindow, ipcMain, nativeTheme, shell, Menu } = require('electron');
 const path = require('node:path');
 const os = require('node:os');
+const { registerUpdater, mode: updateMode } = require('./updater');
 
 const LIGHT = { bg: '#f7f7f5', symbol: '#1b1c1a' };
 const DARK = { bg: '#1a1c1b', symbol: '#e3e5e2' };
@@ -54,8 +55,9 @@ function createWindow() {
 }
 
 ipcMain.on('kq:info', (e) => {
-  e.returnValue = { micaSupported: micaSupported(), platform: process.platform };
+  e.returnValue = { micaSupported: micaSupported(), platform: process.platform, version: app.getVersion(), packaged: app.isPackaged, updateMode: updateMode() };
 });
+registerUpdater();
 
 ipcMain.on('kq:appearance', (e, opts) => {
   if (!win || !opts) return;

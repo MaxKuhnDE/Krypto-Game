@@ -39,6 +39,8 @@
     return el;
   };
 
+  UI.esc = (s) => KQ.util.escape(s);
+
   UI.clear = (el) => { while (el.firstChild) el.removeChild(el.firstChild); return el; };
 
   /** Aufräum-Funktionen (Timer usw.), die beim Seiten-/Tabwechsel laufen */

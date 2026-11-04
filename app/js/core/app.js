@@ -5,7 +5,7 @@
   const KQ = (root.KQ = root.KQ || {});
   const UI = KQ.ui, h = UI.h, S = KQ.state;
 
-  KQ.VERSION = '1.0.0';
+  KQ.VERSION = (root.kqNative && root.kqNative.version) || '1.1.0';
 
   KQ.worlds = [
     { id: 'A', title: 'Algebra-Labor', desc: 'Gruppen, Ringe, Körper, Euklid, Fermat, GF(2⁸) – das Fundament für RSA, DH, AES und Poly1305.' },
@@ -168,6 +168,15 @@
     nav.querySelectorAll('.nav-group').forEach((g) => { const c = g.querySelector(':scope > .nav-item .ni-chev'); if (c) c.textContent = g.classList.contains('open') ? '−' : '+'; });
     nav.querySelector('.nav-item.selected')?.scrollIntoView({ block: 'nearest' });
     updateProgressUI();
+  };
+
+  const updateNavDot = () => {
+    const it = document.querySelector('.nav-item[data-key="settings"]');
+    if (!it) return;
+    let dot = it.querySelector('.upd-dot');
+    const on = KQ.updates && KQ.updates.available();
+    if (on && !dot) { dot = h('span', { class: 'upd-dot', title: 'Update verfügbar' }); it.appendChild(dot); }
+    if (!on && dot) dot.remove();
   };
 
   const updateProgressUI = () => {
@@ -389,7 +398,9 @@
         UI.segmented([['system', 'wie Windows'], ['light', 'hell'], ['dark', 'dunkel']], st.theme, (v) => { S.setSetting('theme', v); KQ.applyTheme(); })),
       h('div', { class: 'row mt' }, UI.toggle('Animationen reduzieren', st.reduceMotion, (v) => { S.setSetting('reduceMotion', v); KQ.applyTheme(); })),
       root.kqNative && root.kqNative.micaSupported ? h('div', { class: 'row mt' }, UI.toggle('Mica-Hintergrund (Windows 11 22H2+)', st.mica, (v) => { S.setSetting('mica', v); KQ.applyTheme(); })) : null,
-      h('h2', null, h('span', { class: 'sec-no' }, '2.'), 'Spielstand'),
+      h('h2', null, h('span', { class: 'sec-no' }, '2.'), 'Updates'),
+      KQ.updates.section(),
+      h('h2', null, h('span', { class: 'sec-no' }, '3.'), 'Spielstand'),
       h('p', { class: 'muted' }, 'Der Fortschritt wird lokal gespeichert und kann als JSON-Datei gesichert und auf einem anderen Rechner wieder eingelesen werden.'),
       h('div', { class: 'row' },
         UI.button('Exportieren', () => {
@@ -398,7 +409,7 @@
         }),
         UI.button('Importieren', () => fileIn.click()), fileIn,
         UI.button('Fortschritt zurücksetzen', () => UI.modal('Fortschritt zurücksetzen?', 'Alle XP, gelösten Challenges und Erfolge werden gelöscht.', [['Abbrechen'], ['Zurücksetzen', () => { S.reset(); KQ.go('#/home'); }, 'accent']]), { kind: 'danger' })),
-      h('h2', null, h('span', { class: 'sec-no' }, '3.'), 'Über'),
+      h('h2', null, h('span', { class: 'sec-no' }, '4.'), 'Über'),
       UI.kv([['Version', KQ.VERSION], ['Stationen', String(KQ.modules.length)], ['Laufzeit', root.kqNative ? 'Windows-App (Electron ' + (root.kqNative.versions?.electron || '?') + ')' : 'Browser']]),
       h('p', { class: 'muted small mt' }, 'Alle Verfahren sind zu Lernzwecken implementiert: nicht in konstanter Zeit, teils mit Spielzeug-Parametern. Nicht für echte Geheimnisse verwenden.'));
   }
@@ -445,5 +456,10 @@
     buildNav();
     render();
     checkBadges();
+    if (KQ.updates) {
+      KQ.updates.onChange(updateNavDot);
+      KQ.updates.announceResult();
+      setTimeout(() => KQ.updates.autoCheck(), 1500);
+    }
   };
 })(typeof window !== 'undefined' ? window : globalThis);

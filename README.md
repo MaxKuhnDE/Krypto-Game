@@ -16,15 +16,17 @@ Umfang: **43 Stationen in 13 Abschnitten, 79 Challenges, 131 Quizfragen**, 9 Stu
 
 ## Installation unter Windows 11
 
-Die Windows‑Pakete baut GitHub Actions auf einem Windows‑Runner (`.github/workflows/build-windows.yml`):
+1. Auf der Seite **[Releases](https://github.com/MaxKuhnDE/Krypto-Game/releases/latest)** die neueste Version öffnen.
+2. `KryptoQuest-Setup-<Version>.exe` (Installer mit Startmenü‑ und Desktop‑Verknüpfung) oder `KryptoQuest-<Version>-portable.exe` (ohne Installation) herunterladen und starten.
+3. Optional die Datei gegen `SHA256SUMS.txt` prüfen: `Get-FileHash .\KryptoQuest-Setup-<Version>.exe` in PowerShell.
 
-1. Im Repository unter **Actions → Windows-Build** den neuesten erfolgreichen Lauf öffnen.
-2. Unten das Artefakt **KryptoQuest-Windows** herunterladen und entpacken.
-3. Entweder `KryptoQuest-Setup-1.0.0.exe` (Installer mit Startmenü‑ und Desktop‑Verknüpfung) oder `KryptoQuest-1.0.0-portable.exe` (ohne Installation) starten.
-
-Wird ein Tag `v*` gepusht (z. B. `v1.0.0`), legt der Workflow die beiden EXE‑Dateien zusätzlich als GitHub‑Release an.
+Die Pakete baut GitHub Actions auf einem Windows‑Runner (`.github/workflows/build-windows.yml`). Ein Release entsteht durch einen Tag `v*` oder über *Actions → Windows-Build → Run workflow* mit `release_tag`; die Release‑Notizen liegen in `docs/release-notes/<tag>.md`.
 
 > **SmartScreen:** Die EXE ist nicht code‑signiert. Windows zeigt deshalb beim ersten Start „Der Computer wurde durch Windows geschützt“. Über *Weitere Informationen → Trotzdem ausführen* startet die App. Ein Zertifikat zum Signieren kostet Geld und ist für ein Lernprojekt nicht eingerichtet.
+
+### Updates
+
+Ab Version 1.1 aktualisiert sich KryptoQuest selbst: *Einstellungen → Updates → Nach Updates suchen → Jetzt aktualisieren*. Die App lädt die neue Version aus dem neuesten GitHub‑Release, prüft die SHA‑256‑Prüfsumme und spielt sie ein – die Installer‑Fassung über den still laufenden Installer, die portable Fassung, indem die neue EXE nach dem Beenden die alte ersetzt. Beim Start sucht die App automatisch (abschaltbar) und markiert „Einstellungen“ mit einem Punkt, wenn eine neue Version bereitsteht. Der Spielstand bleibt erhalten. Version 1.0 hat den Updater noch nicht; der Schritt von 1.0 auf 1.1 geht einmal von Hand.
 
 ### Ohne Installation (Browser)
 
@@ -80,6 +82,8 @@ In den jeweiligen Stationen als „Erratum“ markiert:
 - Reines HTML/CSS/JavaScript ohne Frameworks und ohne Netzwerkzugriff (CSP `connect-src 'none'`), in Electron 44 verpackt (`contextIsolation`, `sandbox`, kein Node im Renderer).
 - Eigene Lehr‑Implementierungen in `app/js/crypto/`: AES‑128 inkl. Modi, SHA‑256 mit offengelegtem Zustand, HMAC, ChaCha20, SIMON 32/64, 𝔽₂⁸, BigInt‑Zahlentheorie (Miller‑Rabin, Euklid, CRT, Pohlig‑Hellman), elliptische Kurven über 𝔽ₚ.
 - `tests/crypto.test.js` (28 Tests): offizielle Testvektoren (FIPS 197 Anhang B/C.1, RFC 8439, Simon‑Paper) und Abgleich mit Node.js‑`crypto` (AES‑ECB/CBC/CTR, SHA‑256, HMAC, ChaCha20).
+- `tests/updater.test.js` (10 Tests): Versionsvergleich, Auswahl der Release‑Datei, Prüfsummen, Download über einen lokalen Server, Austauschskript der portablen Fassung.
+- `tests/e2e.update.js`: Update‑Ablauf in der Electron‑App gegen ein nachgestelltes Release (Hinweis beim Start, Punkt an „Einstellungen“, Download mit Prüfsummenkontrolle, beschädigter Download, keine neue Version).
 - `tests/e2e.challenges.js`: öffnet alle 43 Stationen (inkl. Prüfung auf versehentlich angezeigte `null`/`undefined`) und löst 16 Challenges über die Oberfläche (benötigt Playwright).
 
 ## Ehrliche Grenzen
