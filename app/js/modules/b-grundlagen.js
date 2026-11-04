@@ -28,12 +28,12 @@
 
   // ======================================================================
   KQ.module({
-    id: 'caesar', world: 'B', icon: '🏺', title: 'Caesar-Chiffre',
+    id: 'caesar', world: 'B', title: 'Caesar-Chiffre',
     short: 'Rotation um k Stellen, Brute Force über 25 Schlüssel und automatisches Erkennen deutscher Texte.',
     keywords: 'caesar verschiebung rotation brute force historisch',
     challenges: { crack: { title: 'Geheimbotschaft knacken', xp: 30 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('Definition',
             h('p', null, 'Buchstaben werden auf 0 … 25 abgebildet (A = 0, …, Z = 25). Mit Schlüssel k:'),
@@ -45,7 +45,7 @@
               h('li', null, 'Ein großer Schlüsselraum reicht aber nicht (→ Substitution mit 26! ≈ 2⁸⁸ Schlüsseln ist trotzdem leicht zu brechen).'),
               h('li', null, 'Zum Erkennen des richtigen Schlüssels braucht der Angreifer ein Kriterium für „plausiblen Klartext“ – hier die Buchstabenverteilung (χ²-Test).'))));
       } },
-      { title: '🧪 Labor', render(el) {
+      { title: 'Labor', render(el) {
         let k = 3, txt = 'VENI VIDI VICI';
         const wheel = h('div'), out = h('div', { class: 'msg', style: { fontSize: '15px' } }), bf = h('div');
         const draw = () => {
@@ -70,12 +70,12 @@
           UI.card('Brute Force: alle 26 Schlüssel', bf));
         draw();
       } },
-      { title: '⚔️ Challenge', render(el, ctx) {
+      { title: 'Challenge', render(el, ctx) {
         const m = U.pick(SENTENCES), k = U.randInt(1, 25);
         const c = caesar(m, k);
         el.append(UI.card('Abgefangene Nachricht',
           h('div', { class: 'msg', style: { fontSize: '15px' } }, c),
-          h('p', null, 'Finde den Schlüssel – ohne Brute-Force-Tabelle! Tipp: Der häufigste Buchstabe im Deutschen ist E.'),
+          h('p', null, 'Bestimme den Schlüssel ohne Brute-Force-Tabelle. Hinweis: Der häufigste Buchstabe im Deutschen ist E.'),
           (() => {
             const cnt = counts(c.replace(/ /g, ''));
             const top = Object.entries(cnt).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([x, n]) => `${x} (${n}×)`).join(', ');
@@ -98,12 +98,12 @@
   ];
 
   KQ.module({
-    id: 'substitution', world: 'B', icon: '🔍', title: 'Substitution & Frequenzanalyse',
+    id: 'substitution', world: 'B', title: 'Substitution & Frequenzanalyse',
     short: '26! ≈ 2⁸⁸ Schlüssel – und trotzdem knackbar. Werde zum Frequenzdetektiv.',
     keywords: 'substitution monoalphabetisch frequenzanalyse häufigkeit buchstaben',
     challenges: { crack: { title: 'Geheimtext entschlüsseln', xp: 70 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('Monoalphabetische Substitution',
             h('p', null, 'Statt zu verschieben, wird jeder Buchstabe über eine beliebige Ersetzungstabelle (eine Permutation des Alphabets) ersetzt:'),
@@ -115,7 +115,7 @@
             h('p', { class: 'small muted center' }, 'Buchstabenhäufigkeit im Deutschen')),
           UI.callout('exam', 'Merksatz', 'Alle historischen Verfahren wurden gebrochen. Ein Verfahren gilt erst als sicher, wenn es mehr als 5 Jahre öffentlicher Kryptanalyse standgehalten hat.'));
       } },
-      { title: '⚔️ Challenge: Frequenzdetektiv', render(el, ctx) {
+      { title: 'Challenge: Frequenzdetektiv', render(el, ctx) {
         const plain = U.pick(LONG_TEXTS);
         const perm = U.shuffle(ABC.split(''));
         const enc = {}; ABC.split('').forEach((c, i) => (enc[c] = perm[i]));
@@ -141,7 +141,7 @@
           const frac = right / total;
           UI.clear(status);
           status.append(h('div', { class: 'row' }, h('span', null, `Korrekt entschlüsselte Zeichen: `, h('b', null, Math.round(frac * 100) + ' %')), h('div', { style: { width: '200px' } }, UI.xpbar(frac)), h('span', { class: 'muted small' }, 'Ziel: ≥ 95 %')));
-          if (frac >= 0.95) { status.append(UI.callout('success', 'Geknackt!', 'Ohne den Schlüssel zu kennen – nur mit Statistik. Klartext:<br><span class="mono small">' + plain + '</span>')); ctx.solve('crack'); }
+          if (frac >= 0.95) { status.append(UI.callout('success', 'Entschlüsselt', 'Ohne den Schlüssel zu kennen – nur mit Statistik. Klartext:<br><span class="mono small">' + plain + '</span>')); ctx.solve('crack'); }
           Object.entries(inputs).forEach(([c, inp]) => { if (document.activeElement !== inp) inp.value = guess[c] || ''; });
         };
         order.forEach((c) => {
@@ -170,8 +170,8 @@
             h('p', { class: 'small muted' }, 'Unter jedem Balkenpaar: Geheimtext-Buchstabe | deutscher Buchstabe gleichen Rangs. Häufige Wörter: DER DIE UND DAS IST EIN – häufige Bigramme: EN ER CH EI DE ND TE IE IN SC.')),
           UI.card('Zuordnung (Geheimtext-Buchstabe → Klartext)', mapEl,
             h('div', { class: 'row mt' },
-              UI.button('Vorschlag nach Rang', () => { order.forEach((c, i) => (guess[c] = deOrder[i])); draw(); }, { title: 'Ordnet nach Häufigkeitsrang zu – nur ein Startpunkt!' }),
-              UI.button('💡 Hinweis (1 Buchstabe)', () => { const c = order.find((x) => guess[x] !== dec[x]); if (c) { Object.keys(guess).forEach((k) => { if (guess[k] === dec[c]) delete guess[k]; }); guess[c] = dec[c]; draw(); } }),
+              UI.button('Vorschlag nach Rang', () => { order.forEach((c, i) => (guess[c] = deOrder[i])); draw(); }, { title: 'Ordnet nach Häufigkeitsrang zu – nur ein Startpunkt.' }),
+              UI.button('Hinweis (1 Buchstabe)', () => { const c = order.find((x) => guess[x] !== dec[x]); if (c) { Object.keys(guess).forEach((k) => { if (guess[k] === dec[c]) delete guess[k]; }); guess[c] = dec[c]; draw(); } }),
               UI.button('Zurücksetzen', () => { Object.keys(guess).forEach((k) => delete guess[k]); draw(); }, { kind: 'subtle' }))),
           UI.card('Geheimtext (grün = deine Zuordnung)', textEl, status));
         draw();
@@ -186,12 +186,12 @@
 
   // ======================================================================
   KQ.module({
-    id: 'schutzziele', world: 'B', icon: '🎯', title: 'Schutzziele, Kerckhoffs & Sicherheitsbegriffe',
+    id: 'schutzziele', world: 'B', title: 'Schutzziele, Kerckhoffs & Sicherheitsbegriffe',
     short: 'CIA-Triade, erweiterte Ziele, Kerckhoffs’ Prinzip, informationstheoretische vs. berechenbare Sicherheit.',
     keywords: 'cia vertraulichkeit integrität verfügbarkeit authentizität nichtabstreitbarkeit kerckhoffs sicherheit',
     challenges: { ziele: { title: 'Szenarien zuordnen', xp: 40 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('Kryptologie im Überblick',
             h('div', { class: 'grid c2' },
@@ -220,7 +220,7 @@
                 h('p', { class: 'small' }, 'Sicher gegen Angreifer mit polynomieller Laufzeit; Erfolgswahrscheinlichkeit vernachlässigbar. Beruht auf unbewiesenen Annahmen (P ≠ NP, P ≠ BQP) – „Standardmodell“; dazu Random-Oracle- und Generic-Group-Modell.'))),
             UI.callout('exam', 'Merksatz', 'Info-theoretisch = Beweis gegen jeden Angreifer. Berechenbar = nur gegen realistische (Polynomialzeit-)Angreifer – das ist der relevante Fall für alles außer OTP.')));
       } },
-      { title: '⚔️ Challenge', render(el, ctx) {
+      { title: 'Challenge', render(el, ctx) {
         const opts = ['Vertraulichkeit', 'Integrität', 'Verfügbarkeit', 'Authentizität', 'Nichtabstreitbarkeit', 'Berechtigung'];
         const sc = U.shuffle([
           ['Eve liest im Café-WLAN unverschlüsselte Chatnachrichten mit.', 'Vertraulichkeit'],

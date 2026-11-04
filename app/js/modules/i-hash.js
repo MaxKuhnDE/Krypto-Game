@@ -9,12 +9,12 @@
 
   // ======================================================================
   KQ.module({
-    id: 'hash', world: 'I', icon: '🧬', title: 'Hashfunktionen & ihre Sicherheit',
+    id: 'hash', world: 'I', title: 'Hashfunktionen & ihre Sicherheit',
     short: 'Kollisions-, Preimage- und 2nd-Preimage-Resistenz, Salt gegen Rainbow-Tables, generische Angriffe live.',
     keywords: 'hash sha-256 kollision preimage second preimage salt rainbow table geburtstagsangriff fingerabdruck',
     challenges: { collision: { title: 'Kollision (20 Bit) einreichen', xp: 40 }, salt: { title: 'Gleiches Passwort finden', xp: 30 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('Definition',
             UI.formula('Hₙ : {0,1}* → {0,1}ⁿ'),
@@ -29,7 +29,7 @@
           UI.card('Praxis: Salt bei Passwort-Hashes',
             h('p', null, 'Ohne Salt sind Rainbow-Tables (vorausberechnete Hash-Wörterbücher) effektiv und gleiche Passwörter haben gleiche Hashes. Mit Salt muss der Angreifer pro Salt neu rechnen. (In der Praxis zusätzlich langsame Funktionen wie Argon2/scrypt.)')));
       } },
-      { title: '🧪 SHA-256 & Avalanche', render(el) {
+      { title: 'SHA-256 & Avalanche', render(el) {
         let a = 'Kryptografie', b = 'kryptografie';
         const out = h('div');
         const draw = () => {
@@ -42,7 +42,7 @@
         el.append(UI.card('Zwei Eingaben vergleichen', h('div', { class: 'grid c2' }, UI.field('a', UI.input({ value: a, w: 'full', oninput: (v) => { a = v; draw(); } })), UI.field('b', UI.input({ value: b, w: 'full', oninput: (v) => { b = v; draw(); } }))), out));
         draw();
       } },
-      { title: '🧪 Generische Angriffe', render(el) {
+      { title: 'Generische Angriffe', render(el) {
         let bits = 20;
         const out = h('div');
         let running = null;
@@ -76,10 +76,10 @@
         el.append(UI.card('SHA-256 auf t Bit gekürzt',
           h('p', null, 'Wie lange dauert es, für einen gekürzten Hash ein Urbild bzw. eine Kollision zu finden?'),
           UI.slider({ label: 't =', min: 8, max: 24, value: bits, oninput: (v) => { bits = v; } }),
-          h('div', { class: 'row mt' }, UI.button('🎯 Preimage suchen (≈ 2^t)', () => runSearch('pre')), UI.button('🎂 Kollision suchen (≈ 2^(t/2))', () => runSearch('col'), { kind: 'accent' }), UI.button('Stopp', stop, { kind: 'subtle' })),
+          h('div', { class: 'row mt' }, UI.button('Preimage suchen (≈ 2^t)', () => runSearch('pre')), UI.button('Kollision suchen (≈ 2^(t/2))', () => runSearch('col'), { kind: 'accent' }), UI.button('Stopp', stop, { kind: 'subtle' })),
           out, h('p', { class: 'small muted' }, 'Hochgerechnet auf volle 256 Bit: Kollision ≈ 2¹²⁸ Versuche – unmöglich.')));
       } },
-      { title: '⚔️ Challenges', render(el, ctx) {
+      { title: 'Challenges', render(el, ctx) {
         const a = UI.input({ w: 'l', placeholder: 'String 1' }), b = UI.input({ w: 'l', placeholder: 'String 2' });
         const r1 = h('div');
         const users = ['alice', 'bob', 'carol', 'dave', 'erin', 'frank'];
@@ -123,12 +123,12 @@
 
   // ======================================================================
   KQ.module({
-    id: 'merkle', world: 'I', icon: '⛓️', title: 'Merkle-Damgård-Konstruktion',
+    id: 'merkle', world: 'I', title: 'Merkle-Damgård-Konstruktion',
     short: 'Kompressionsfunktionen verketten – und warum ohne Längen-Padding Kollisionen geschenkt sind.',
     keywords: 'merkle damgård kompressionsfunktion padding verkettung kollisionsresistent beweis sha-256',
     challenges: { nopad: { title: 'Kollision ohne Längenpadding', xp: 50 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('Verkettung',
             h('p', null, 'Eine Kompressionsfunktion Hₙ: {0,1}²ⁿ → {0,1}ⁿ (mit Salt S) wird verkettet: Y₁ = X₁, Yᵢ₊₁ = Hₙ(S, Yᵢ ‖ Xᵢ₊₁). Der letzte Wert ist der Hash.'),
@@ -143,7 +143,7 @@
             h('p', { class: 'muted' }, 'SHA-256 ist MD-basiert: Nachricht ‖ 0x80 ‖ 0x00… ‖ 64-Bit-Länge, Blöcke à 512 Bit, interner Zustand 256 Bit.')),
           UI.callout('warning', 'Nebenwirkung: Length-Extension', 'Ohne Salt gilt: Aus Y = H*(K‖X) lässt sich H*(Pad(K‖X)‖X′) berechnen, ohne K zu kennen ⇒ F(K, X) = H*(K‖X) ist keine sichere PRF (nächste Station).'));
       } },
-      { title: '🧪 SHA-256 von innen', render(el) {
+      { title: 'SHA-256 von innen', render(el) {
         let txt = 'abc';
         const out = h('div');
         const draw = () => {
@@ -160,7 +160,7 @@
         el.append(UI.card('Padding und Zustandsverkettung', UI.input({ value: txt, w: 'full', oninput: (v) => { txt = v; draw(); } }), out));
         draw();
       } },
-      { title: '⚔️ Challenge', render(el, ctx) {
+      { title: 'Challenge', render(el, ctx) {
         const X = Array.from({ length: 4 }, () => U.randInt(0, 0xffff));
         const target = TOY.chainNoPad(X).hash;
         const ins = [0, 1, 2].map(() => UI.input({ mono: true, w: 's', placeholder: 'hex' }));
@@ -176,7 +176,7 @@
             const hv = TOY.chainNoPad(bl).hash;
             if (hv === target) {
               const md1 = TOY.chainMD(X).hash, md2 = TOY.chainMD(bl).hash;
-              res.append(UI.callout('success', 'Kollision!', `Beide Nachrichten haben den Hash ${U.hex16(hv)}. Mit Merkle-Damgård-Längenblock dagegen: ${U.hex16(md1)} ≠ ${U.hex16(md2)} – der Längenblock verhindert den Trick.`));
+              res.append(UI.callout('success', 'Kollision gefunden', `Beide Nachrichten haben den Hash ${U.hex16(hv)}. Mit Merkle-Damgård-Längenblock dagegen: ${U.hex16(md1)} ≠ ${U.hex16(md2)} – der Längenblock verhindert den Trick.`));
               ctx.solve('nopad');
             } else res.append(UI.status(false, `Hash ${U.hex16(hv)} ≠ ${U.hex16(target)}`));
           }, { kind: 'accent' })), res));
@@ -190,12 +190,12 @@
 
   // ======================================================================
   KQ.module({
-    id: 'lengthext', world: 'I', icon: '📏', title: 'Length-Extension & HMAC',
+    id: 'lengthext', world: 'I', title: 'Length-Extension & HMAC',
     short: 'Warum SHA-256(k‖m) kein MAC ist (Praktikum 3.2) – und wie HMAC das mit ipad/opad löst.',
     keywords: 'length extension längenerweiterung sha-256 prefix mac hmac nmac ipad opad praktikum',
     challenges: { forge: { title: 'Prefix-MAC verlängern', xp: 70 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('Das Problem mit t = H(k ‖ m)',
             h('p', null, 'Bei Merkle-Damgård ist der Hashwert ', h('b', null, 'gleich dem internen Zustand'), ' nach dem letzten Block. Wer t = H(k‖m) und die Länge |k‖m| kennt, kann einfach weiterrechnen:'),
@@ -209,7 +209,7 @@
           ], { wrap: false }),
           UI.callout('info', 'Und SHA-3?', 'Sponge-Konstruktionen geben nur einen Teil des Zustands aus (die Capacity bleibt verborgen) – Length-Extension funktioniert dort nicht.'));
       } },
-      { title: '⚔️ Challenge: Prefix-MAC', render(el, ctx) {
+      { title: 'Challenge: Prefix-MAC', render(el, ctx) {
         const keyLen = U.randInt(8, 20);
         const key = U.randomBytes(keyLen);
         const msg = U.utf8('user=bob&role=user');
@@ -233,7 +233,7 @@
           UI.kv([['Anfrage', U.fromUtf8(msg)], ['Tag', U.hex(tag)]]),
           h('div', { class: 'row mt' }, UI.field('Anhängen', ext), UI.slider({ label: 'vermutete |k| =', min: 1, max: 32, value: guess, oninput: (v) => { guess = v; build(); } }), UI.button('Berechnen', build)),
           out,
-          h('div', { class: 'row mt' }, UI.button('📨 An den Server senden', () => {
+          h('div', { class: 'row mt' }, UI.button('An den Server senden', () => {
             UI.clear(res);
             if (!forged) return;
             const ok = U.equal(SHA.hash(U.concat(key, forged.forgedMsg)), forged.digest);
@@ -244,7 +244,7 @@
           }, { kind: 'accent' })), res));
         build();
       } },
-      { title: '🧪 HMAC', render(el) {
+      { title: 'HMAC', render(el) {
         let k = 'geheim', m = 'user=bob&role=user';
         const out = h('div');
         const draw = () => {

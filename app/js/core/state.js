@@ -93,15 +93,15 @@
   };
 
   S.RANKS = [
-    [0, 'Klartext-Lehrling', '🐣'],
-    [150, 'Caesar-Kadett', '🏛️'],
+    [0, 'Klartext-Lehrling', ''],
+    [150, 'Caesar-Kadett', ''],
     [400, 'XOR-Adept', '⊕'],
-    [800, 'Feistel-Ritter', '🛡️'],
-    [1300, 'AES-Architekt', '🧱'],
-    [2000, 'Hash-Hüter', '🧬'],
-    [2800, 'Beweis-Magier', '🎲'],
-    [3800, 'Public-Key-Paladin', '🔑'],
-    [5000, 'Krypto-Großmeister', '👑'],
+    [800, 'Feistel-Ritter', ''],
+    [1300, 'AES-Architekt', ''],
+    [2000, 'Hash-Hüter', ''],
+    [2800, 'Beweis-Magier', ''],
+    [3800, 'Public-Key-Paladin', ''],
+    [5000, 'Krypto-Großmeister', ''],
   ];
 
   S.rank = () => {

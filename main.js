@@ -4,8 +4,8 @@ const { app, BrowserWindow, ipcMain, nativeTheme, shell, Menu } = require('elect
 const path = require('node:path');
 const os = require('node:os');
 
-const LIGHT = { bg: '#eef1f6', symbol: '#1a1a1a' };
-const DARK = { bg: '#1c1c1c', symbol: '#ffffff' };
+const LIGHT = { bg: '#f7f7f5', symbol: '#1b1c1a' };
+const DARK = { bg: '#1a1c1b', symbol: '#e3e5e2' };
 
 /** Mica gibt es ab Windows 11 22H2 (Build 22621) */
 const micaSupported = () => {

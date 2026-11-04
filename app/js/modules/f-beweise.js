@@ -17,12 +17,12 @@
   ];
 
   KQ.module({
-    id: 'negl', world: 'F', icon: '📉', title: 'Vernachlässigbarkeit & Ununterscheidbarkeit',
+    id: 'negl', world: 'F', title: 'Vernachlässigbarkeit & Ununterscheidbarkeit',
     short: 'Was „praktisch null“ formal heißt, wie man Spiele vergleicht und warum Hybrid-Ketten funktionieren.',
     keywords: 'vernachlässigbar negligible ununterscheidbar advantage vorteil library bibliothek hybrid',
     challenges: { classify: { title: 'Funktionen klassifizieren', xp: 40 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('Vernachlässigbare Funktion',
             h('p', null, 'f ist ', h('b', null, 'vernachlässigbar'), ', wenn es für jedes Polynom p ein κ₀ gibt mit f(κ) < 1/p(κ) für alle κ > κ₀. Umgangssprachlich: f fällt schneller gegen 0 als 1/p(κ) für jedes Polynom.'),
@@ -41,7 +41,7 @@
             h('div', { class: 'grid c2' }, UI.lib('L<sub>prg-real</sub>', ['PRG.SAMPLE():', '  S ← {0,1}^κ', '  return G(S)']), UI.lib('L<sub>prg-rand</sub>', ['PRG.SAMPLE():', '  Y ← {0,1}^(κ+l)', '  return Y'])),
             h('p', null, 'G: {0,1}^κ → {0,1}^(κ+l) deterministisch, l > 0, sicher wenn L_prg-real ≈ L_prg-rand. Ob PRGs existieren, ist offen (P = NP ⇒ vermutlich nicht). Die Kryptografie nimmt ihre Existenz an.')));
       } },
-      { title: '🧪 Labor', render(el) {
+      { title: 'Labor', render(el) {
         let fi = 1, c = 3;
         const out = h('div');
         const draw = () => {
@@ -57,7 +57,7 @@
           h('div', { class: 'row' }, UI.select(FUNCS.map((f, i) => [i, f[0]]), fi, (v) => { fi = +v; draw(); }), UI.slider({ label: 'Polynomgrad c =', min: 1, max: 40, value: c, oninput: (v) => { c = v; draw(); } })), out));
         draw();
       } },
-      { title: '⚔️ Challenge', render(el, ctx) {
+      { title: 'Challenge', render(el, ctx) {
         const items = U.shuffle(FUNCS);
         const ans = {}; const r = h('div');
         el.append(UI.card('Vernachlässigbar oder nicht?',
@@ -87,12 +87,12 @@
   ];
 
   KQ.module({
-    id: 'arena', world: 'F', icon: '🥊', title: 'Unterscheider-Arena: PRG, PRF, PRP',
+    id: 'arena', world: 'F', title: 'Unterscheider-Arena: PRG, PRF, PRP',
     short: 'Du bist der Angreifer: Erkenne, ob du mit der echten Konstruktion oder mit idealem Zufall sprichst.',
     keywords: 'prg prf prp unterscheider distinguisher lazy sampling switching lemma arena feistel',
     challenges: { prg: { title: 'PRG s‖s entlarven', xp: 30 }, prf: { title: 'PRF K⊕X entlarven', xp: 40 }, f1: { title: '1-Runden-Feistel', xp: 40 }, f2: { title: '2-Runden-Feistel', xp: 60 }, secure: { title: 'AES-PRF ausprobieren', xp: 20 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('PRF – Pseudozufallsfunktion',
             h('div', { class: 'grid c2' }, UI.lib('L<sub>prf-real</sub>', ['K ← {0,1}^κ', 'QUERY(X):', '  return F(K, X)']), UI.lib('L<sub>prf-rand</sub>', ['QUERY(X):', '  if L[X] undefined:', '    L[X] ← {0,1}^m', '  return L[X]'])),
@@ -149,7 +149,7 @@
             }
           },
           onWin: () => ctx.solve(lv.id),
-          onEnd: () => { if (lv.kind === 'aes') { ctx.solve('secure'); UI.toast('Erkenntnis', 'Gegen eine gute PRF bleibt dein Vorteil nahe 0 – genau das bedeutet „sicher“.', '🧠'); } },
+          onEnd: () => { if (lv.kind === 'aes') { ctx.solve('secure'); UI.toast('Spiel beendet', 'Gegen eine gute PRF bleibt der Vorteil nahe 0 – genau das bedeutet „sicher“.'); } },
           explain: (w, b) => (lv.kind === 'aes' ? '' : b === 0 ? 'Die reale Konstruktion hatte die Struktur aus dem Tipp.' : 'Die ideale Bibliothek hat keine Struktur.'),
         });
       } })),
@@ -165,12 +165,12 @@
   const birthdayExact = (q, N) => { let p = 1; for (let i = 0; i < q; i++) { p *= (N - i) / N; if (p < 1e-12) return 1; } return 1 - p; };
 
   KQ.module({
-    id: 'geburtstag', world: 'F', icon: '🎂', title: 'Geburtstagsparadoxon & Kollisionsschranke',
+    id: 'geburtstag', world: 'F', title: 'Geburtstagsparadoxon & Kollisionsschranke',
     short: 'Warum Kollisionen nach ≈ 2^(n/2) statt 2ⁿ Versuchen kommen – und weshalb fast jeder Beweis bei q²/2^κ endet.',
     keywords: 'geburtstag birthday kollision schranke union bound sweet32 hash',
     challenges: { estimate: { title: '50-%-Schwelle schätzen', xp: 40 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('Das Paradoxon',
             h('p', null, 'Unter 23 Personen haben mit > 50 % zwei am selben Tag Geburtstag. Allgemein: Zieht man q Werte gleichverteilt aus N Möglichkeiten,'),
@@ -183,7 +183,7 @@
               h('li', null, h('b', null, 'Hashfunktionen: '), 'Generischer Kollisionsangriff in 2^(n/2) – daher 256-Bit-Hashes für 128-Bit-Sicherheit.'),
               h('li', null, h('b', null, 'Sweet32: '), '64-Bit-Blockchiffren (3DES, Blowfish) kollidieren nach ≈ 2³² Blöcken.'))));
       } },
-      { title: '🧪 Labor', render(el) {
+      { title: 'Labor', render(el) {
         let n = 16;
         const out = h('div'), sim = h('div');
         const draw = () => {
@@ -203,10 +203,10 @@
           sim.append(h('p', null, `200 Experimente: im Mittel erste Kollision nach `, h('b', null, avg.toFixed(0)), ` Ziehungen (Theorie √(πN/2) ≈ ${Math.sqrt((Math.PI * N) / 2).toFixed(0)}).`));
         };
         el.append(UI.card('Kollisionswahrscheinlichkeit', UI.slider({ label: 'Bitlänge n =', min: 6, max: 24, value: n, oninput: (v) => { n = v; draw(); UI.clear(sim); } }), out,
-          h('div', { class: 'row' }, UI.button('🎲 Experiment: ziehen bis zur Kollision (200×)', runSim)), sim));
+          h('div', { class: 'row' }, UI.button('Experiment: ziehen bis zur Kollision (200×)', runSim)), sim));
         draw();
       } },
-      { title: '⚔️ Challenge', render(el, ctx) {
+      { title: 'Challenge', render(el, ctx) {
         el.append(UI.card('Schätze ab',
           h('p', null, 'Wie viele zufällige ', h('b', null, '32-Bit'), '-Werte musst du ziehen, damit die Kollisionswahrscheinlichkeit etwa 50 % beträgt? (±20 % Toleranz)'),
           T.answer('q ≈', (v) => { const q = +v.replace(/[.\s]/g, ''); if (q > 61700 && q < 92600) { ctx.solve('estimate'); return true; } return q > 92600 ? 'zu viel' : 'zu wenig'; })));
@@ -271,12 +271,12 @@
   ];
 
   KQ.module({
-    id: 'gamehopping', world: 'F', icon: '🧠', title: 'Game-Hopping-Werkstatt',
+    id: 'gamehopping', world: 'F', title: 'Game-Hopping-Werkstatt',
     short: 'Das Beweisrezept der Vorlesung: Hybride ordnen, ≡ von ≈ trennen und jeden Hop begründen.',
     keywords: 'game hopping beweis hybrid reduktion bad event lazy sampling three hop dictionary',
     challenges: Object.fromEntries(PROOFS.map((p) => [p.id, { title: p.title, xp: 60 }])),
     tabs: [
-      { title: '📖 Rezept', render(el) {
+      { title: 'Rezept', render(el) {
         el.append(
           UI.card('Vom Real- zum Ideal-Spiel in vier Stufen',
             h('div', { class: 'grid c4' }, [['① Dictionary', 'rein syntaktisch: jede Funktionsauswertung in einer Tabelle cachen (≡)'], ['② Ideal ersetzen', 'Annahme (PRF, PRP, DDH, RO …) erlaubt, echte durch zufällige Werte zu ersetzen (≈) – hier steckt die Reduktion'], ['③ Bad-Event', 'Spiel um ein bad-Flag instrumentieren; ohne bad identisch'], ['④ Pr[bad]', 'separat abschätzen – meist Union Bound / Geburtstag']].map(([t, d]) =>
@@ -299,7 +299,7 @@
             ], { wrap: false })),
           UI.callout('exam', 'Reihenfolge bei Encrypt-then-MAC', 'Erst das MAC-Argument (macht das Dec-Orakel nutzlos), dann das CPA-Argument. Umgekehrt geht es nicht: Solange Dec noch echt entschlüsselt, lässt sich die CPA-Reduktion nicht simulieren.'));
       } },
-      ...PROOFS.map((p) => ({ title: '🧩 ' + p.title.split(' ')[0], render(el, ctx) {
+      ...PROOFS.map((p) => ({ title: p.title.split(' ')[0], render(el, ctx) {
         const first = p.hy[0], last = p.hy[p.hy.length - 1];
         let order = [0].concat(U.shuffle(p.hy.slice(1, -1).map((_, i) => i + 1))).concat([p.hy.length - 1]);
         if (p.hy.length > 3) while (order.slice(1, -1).every((v, i) => v === i + 1)) order = [0].concat(U.shuffle(p.hy.slice(1, -1).map((_, i) => i + 1))).concat([p.hy.length - 1]);

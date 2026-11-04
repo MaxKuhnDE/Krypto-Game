@@ -6,12 +6,12 @@
 
   // ======================================================================
   KQ.module({
-    id: 'strukturen', world: 'A', icon: '🏗️', title: 'Algebraische Strukturen',
+    id: 'strukturen', world: 'A', title: 'Algebraische Strukturen',
     short: 'Monoid → Gruppe → Ring → Körper: Axiome selbst prüfen, Cayley-Tafeln, Nullteiler.',
     keywords: 'monoid gruppe ring körper assoziativ neutral invers kommutativ cayley',
     challenges: { classify: { title: 'Strukturen klassifizieren', xp: 40 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('Die Hierarchie',
             h('div', { class: 'grid c4' },
@@ -37,7 +37,7 @@
             'Dort steht beim Ring „(R\\{0}, ·) ist Monoid“. Das ist zu streng: Dann wäre ℤ₆ kein Ring, weil 2·3 = 0 ∉ ℤ₆\\{0} (nicht abgeschlossen). Üblich und mit dem Rest des Skripts konsistent: <b>(R, ·) ist ein Monoid</b>.'),
           UI.callout('exam', 'Klausur-Tipp', 'Bei „Ist X eine Gruppe?“ immer alle Axiome einzeln prüfen: Abgeschlossenheit (wird gern vergessen!), Assoziativität, neutrales Element, Inverse – und ggf. Kommutativität.'));
       } },
-      { title: '🧪 Labor: Struktur-Prüfer', render(el) {
+      { title: 'Labor: Struktur-Prüfer', render(el) {
         let n = 8, op = 'mul', noZero = true;
         const out = h('div');
         const draw = () => {
@@ -80,7 +80,7 @@
           out));
         draw();
       } },
-      { title: '⚔️ Challenge', render(el, ctx) {
+      { title: 'Challenge', render(el, ctx) {
         const pool = [
           ['(ℤ, +)', 'Gruppe'], ['(ℤ, ·)', 'Monoid'], ['(ℕ₀, +)', 'Monoid'], ['(ℚ \\ {0}, ·)', 'Gruppe'],
           ['(ℤ₇ \\ {0}, ·)', 'Gruppe'], ['(ℤ₈ \\ {0}, ·)', 'nichts davon'], ['(ℤ₁₂, +)', 'Gruppe'], ['(ℤ, +, ·)', 'Ring (kein Körper)'],
@@ -98,7 +98,7 @@
           h('div', { class: 'row mt' }, UI.button('Auswerten', () => {
             const wrong = items.filter(([, a], i) => answers[i] !== a);
             UI.clear(res);
-            if (!wrong.length) { res.append(UI.callout('success', 'Alles richtig!', 'Du kennst die Hierarchie.')); ctx.solve('classify'); }
+            if (!wrong.length) { res.append(UI.callout('success', 'Alle Zuordnungen korrekt', 'Du kennst die Hierarchie.')); ctx.solve('classify'); }
             else res.append(UI.callout('danger', `${wrong.length} falsch`, wrong.map(([s, a]) => `${s}: <b>${a}</b>`).join('<br>') + '<br>Tipp: ℤ₈\\{0} und ℤ₉\\{0} sind nicht abgeschlossen (2·4 ≡ 0, 3·3 ≡ 0). ℤ₁₅* sind nur die primen Restklassen – die bilden immer eine Gruppe.'));
           }, { kind: 'accent' }), UI.button('Neue Aufgaben', () => ctx.goTab(2))), res));
       } },
@@ -113,12 +113,12 @@
 
   // ======================================================================
   KQ.module({
-    id: 'restklassen', world: 'A', icon: '🔢', title: 'Restklassen, ℤₙ* & φ(n)',
+    id: 'restklassen', world: 'A', title: 'Restklassen, ℤₙ* & φ(n)',
     short: 'Nullteiler, prime Restklassen, Eulersche φ-Funktion – visuell für jedes n.',
     keywords: 'modulo restklasse nullteiler phi euler prime restklassen inverses',
     challenges: { phi: { title: '3× φ(n) berechnen', xp: 40 }, zerodiv: { title: 'Nullteiler finden', xp: 25 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('Restklassen',
             h('p', null, h('span', { class: 'math' }, 'a ≡ b (mod n)  ⟺  n | (b − a)'), '. ℤₙ ist die Menge der Restklassen {0, 1, …, n−1}. (ℤₙ, +) ist immer eine zyklische Gruppe, (ℤₙ \\ {0}, ·) dagegen nur für n prim.')),
@@ -131,7 +131,7 @@
             h('p', null, 'Für quadratfreie n = p₁·p₂·… gilt φ(n) = ∏(pᵢ − 1). Beispiel: φ(15) = 2 · 4 = 8. Für Primzahlpotenzen: φ(pᵏ) = pᵏ − pᵏ⁻¹.'),
             UI.callout('exam', 'Wofür?', 'RSA: φ(n) = (p−1)(q−1) und e·d ≡ 1 (mod φ(n)). Euler: a^φ(n) ≡ 1 (mod n) für ggT(a,n)=1.')));
       } },
-      { title: '🧪 Labor', render(el) {
+      { title: 'Labor', render(el) {
         let n = 35, sel = 7;
         const grid = h('div', { class: 'mt' }), info = h('div', { class: 'mt' }), phiBox = h('div');
         const draw = () => {
@@ -163,7 +163,7 @@
           grid, info, phiBox));
         draw();
       } },
-      { title: '⚔️ Challenges', render(el, ctx) {
+      { title: 'Challenges', render(el, ctx) {
         // φ-Challenge
         const cands = [21, 33, 35, 39, 45, 51, 55, 63, 65, 77, 84, 91, 98, 100, 105, 119, 143];
         let tasks = U.shuffle(cands).slice(0, 3), streak = 0;
@@ -203,12 +203,12 @@
 
   // ======================================================================
   KQ.module({
-    id: 'euklid', world: 'A', icon: '➗', title: 'Euklid & erweiterter Euklid',
+    id: 'euklid', world: 'A', title: 'Euklid & erweiterter Euklid',
     short: 'ggT, Bézout-Koeffizienten und modulare Inverse – mit Rechentabelle und Timing-Seitenkanal.',
     keywords: 'euklid ggt bezout inverses modular erweitert eucleak seitenkanal',
     challenges: { bezout: { title: 'Bézout-Darstellung finden', xp: 40 }, inverse: { title: 'RSA-d berechnen', xp: 40 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('Algorithmus',
             h('pre', { class: 'code' }, 'Euklid(x, y):\n  while y > 0:\n    (x, y) ← (y, x mod y)\n  return x'),
@@ -220,7 +220,7 @@
             h('p', { class: 'muted' }, 'Beispiel aus dem Skript: 576 = 115·5 + 1 ⇒ 1 = 576 − 115·5 ⇒ 5⁻¹ ≡ −115 ≡ 461 (mod 576).')),
           UI.callout('warning', 'Seitenkanal: nicht konstante Zeit', 'Die Anzahl der Schleifendurchläufe hängt von den Eingaben ab. Wer die Laufzeit misst, lernt etwas über geheime Werte. Genau das wurde 2024 beim Infineon-ECDSA-Angriff („EUCLEAK“) ausgenutzt – im Labor siehst du, wie stark die Iterationszahl schwankt.'));
       } },
-      { title: '🧪 Labor', render(el) {
+      { title: 'Labor', render(el) {
         const X = UI.input({ value: '576', mono: true, w: 'm' }), Y = UI.input({ value: '5', mono: true, w: 'm' });
         const out = h('div');
         const run = () => {
@@ -249,7 +249,7 @@
             h('p', { class: 'small muted' }, 'Die Laufzeit (∝ Iterationen) verrät Information über die Eingabe. Konstante-Zeit-Implementierungen laufen immer gleich viele Runden (z. B. binärer GCD mit fester Rundenzahl oder Inversion per Fermat a^(p−2)).')));
         run();
       } },
-      { title: '⚔️ Challenges', render(el, ctx) {
+      { title: 'Challenges', render(el, ctx) {
         let x = U.randInt(200, 999), y = U.randInt(100, x - 1);
         const g = Number(NT.gcd(x, y));
         const A = UI.input({ placeholder: 'a', mono: true, w: 's' }), B = UI.input({ placeholder: 'b', mono: true, w: 's' }), G = UI.input({ placeholder: 'ggT', mono: true, w: 's' });
@@ -310,12 +310,12 @@
   };
 
   KQ.module({
-    id: 'zyklisch', world: 'A', icon: '🔄', title: 'Zyklische Gruppen & Erzeuger',
+    id: 'zyklisch', world: 'A', title: 'Zyklische Gruppen & Erzeuger',
     short: 'Potenzen gᶦ mod p als Kreis, Ordnungen, Lagrange und der Erzeuger-Test.',
     keywords: 'zyklisch erzeuger generator ordnung lagrange untergruppe primitivwurzel',
     challenges: { gen: { title: 'Erzeuger finden', xp: 40 }, order: { title: 'Ordnung bestimmen', xp: 30 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('Zyklische Gruppe',
             h('p', null, '(G, ∘) heißt zyklisch, wenn es einen ', h('b', null, 'Erzeuger'), ' g gibt, dessen Potenzen g, g², g³, … alle Elemente durchlaufen. Beispiele: 1 erzeugt (ℤ₄, +); 3 erzeugt (ℤ₇*, ·); ℤ₁₅* ist nicht zyklisch.'),
@@ -329,7 +329,7 @@
             h('p', null, '|ℤ₂₃*| = 22 = 2·11 ⇒ Untergruppenordnungen {1, 2, 11, 22}. Test g = 5: 5¹¹ mod 23 = 22 ≠ 1 und 5² mod 23 = 2 ≠ 1 ⇒ 5 erzeugt ganz ℤ₂₃*. Die quadratischen Reste bilden die Untergruppe der Ordnung 11, erzeugt von 5² = 2.')),
           UI.callout('exam', 'Wozu?', 'DH, ElGamal und Schnorr rechnen in einer zyklischen Gruppe mit Erzeuger g. Kleine Untergruppen sind gefährlich (Pohlig-Hellman) – deshalb Safe Primes und die QR-Untergruppe primer Ordnung (Welt K).'));
       } },
-      { title: '🧪 Labor', render(el) {
+      { title: 'Labor', render(el) {
         const primes = NT.primesUpTo(110).filter((p) => p > 5);
         let p = 23, g = 5;
         const viz = h('div'), side = h('div');
@@ -355,7 +355,7 @@
           h('div', { class: 'grid c2 mt' }, viz, side)));
         draw();
       } },
-      { title: '⚔️ Challenges', render(el, ctx) {
+      { title: 'Challenges', render(el, ctx) {
         const sp = U.pick([23, 47, 59, 83, 107]);
         const p2 = U.pick([23, 29, 31, 37, 41, 43]);
         let a2 = U.randInt(2, p2 - 2);
@@ -388,12 +388,12 @@
 
   // ======================================================================
   KQ.module({
-    id: 'sqm', world: 'A', icon: '⚡', title: 'Square-and-Multiply & Fermat',
+    id: 'sqm', world: 'A', title: 'Square-and-Multiply & Fermat',
     short: 'Schnelles Potenzieren, kleiner Satz von Fermat, Euler – und warum das Bitmuster leaken kann.',
     keywords: 'square multiply potenzieren fermat euler inverses exponent',
     challenges: { manual: { title: 'Potenz von Hand', xp: 40 }, fermat: { title: 'Inverses per Fermat', xp: 30 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('Kleiner Satz von Fermat & Euler',
             UI.formula('a<sup>p</sup> ≡ a (mod p)      ⇒      a<sup>p−1</sup> ≡ 1  und  a<sup>p−2</sup> ≡ a<sup>−1</sup> (mod p),  a ∈ ℤₚ*'),
@@ -406,7 +406,7 @@
             h('p', null, 'Aufwand: ⌊log₂ e⌋ + 1 Quadrierungen und (Anzahl Einsen) Multiplikationen – statt e − 1 Multiplikationen. Für 2048-Bit-RSA: ~3000 statt 2²⁰⁴⁸ Operationen.'),
             UI.callout('warning', 'Seitenkanal', 'Die Folge Q, QM, Q, QM … verrät das Bitmuster des (geheimen!) Exponenten, wenn man Strom oder Zeit misst (Simple Power Analysis). Abhilfe: Montgomery-Leiter, konstante Operationen.')));
       } },
-      { title: '🧪 Labor', render(el) {
+      { title: 'Labor', render(el) {
         const Bi = UI.input({ value: '7', mono: true, w: 'm' }), Ei = UI.input({ value: '560', mono: true, w: 'm' }), Ni = UI.input({ value: '561', mono: true, w: 'm' });
         const out = h('div');
         const run = () => {
@@ -423,7 +423,7 @@
           h('p', { class: 'small muted' }, 'Voreinstellung: 7⁵⁶⁰ mod 561 = 1, obwohl 561 = 3·11·17 keine Primzahl ist (Carmichael-Zahl) – der Fermat-Test allein ist kein Primtest.')));
         run();
       } },
-      { title: '⚔️ Challenges', render(el, ctx) {
+      { title: 'Challenges', render(el, ctx) {
         const b = U.randInt(2, 9), e = U.randInt(11, 40), n = U.pick([17, 19, 23, 29, 31, 37, 41, 43, 47]);
         const tr = NT.sqmTrace(BigInt(b), BigInt(e), BigInt(n));
         const area = h('div');
@@ -458,12 +458,12 @@
 
   // ======================================================================
   KQ.module({
-    id: 'gf28', world: 'A', icon: '🧷', title: 'Polynomarithmetik in 𝔽₂⁸',
+    id: 'gf28', world: 'A', title: 'Polynomarithmetik in 𝔽₂⁸',
     short: 'Bytes als Polynome: Addition = XOR, Multiplikation mod x⁸+x⁴+x³+x+1 – die Mathematik hinter AES.',
     keywords: 'gf galois polynom körpererweiterung irreduzibel xtime aes mixcolumns',
     challenges: { xtime: { title: 'xtime von Hand', xp: 30 }, mul: { title: 'Bytes multiplizieren', xp: 40 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('Körpererweiterung 𝔽ₚ[x]/(f)',
             h('p', null, 'Ein endlicher Körper 𝔽ₚ wird durch ein irreduzibles Polynom f vom Grad n zu 𝔽ₚⁿ erweitert. Elemente sind Polynome vom Grad < n mit Koeffizienten aus 𝔽ₚ. Für p prim und n ∈ ℕ gibt es bis auf Isomorphie genau einen Körper 𝔽ₚⁿ.'),
@@ -478,7 +478,7 @@
             h('p', null, 'Bekanntes Beispiel aus FIPS 197: 0x57 · 0x83 = 0xC1.'),
             UI.callout('exam', 'Wo kommt das vor?', 'SubBytes (multiplikatives Inverses), MixColumns (Multiplikation mit 01, 02, 03), GHASH in GCM (dort 𝔽₂¹²⁸). Irreduzibel: x² + x + 1 über 𝔽₂ (zerfällt erst über ℂ).')));
       } },
-      { title: '🧪 Labor', render(el) {
+      { title: 'Labor', render(el) {
         let a = 0x57, b = 0x83;
         const out = h('div');
         const bitEditor = (get, set) => {
@@ -505,7 +505,7 @@
           out));
         refresh();
       } },
-      { title: '⚔️ Challenges', render(el, ctx) {
+      { title: 'Challenges', render(el, ctx) {
         const a = U.randInt(0x80, 0xff);
         const tasks = [[U.randInt(1, 255), 2], [U.randInt(1, 255), 3], [U.randInt(1, 255), U.randInt(4, 15)]];
         let k = 0;

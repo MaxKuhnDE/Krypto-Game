@@ -17,12 +17,12 @@
 
   // ======================================================================
   KQ.module({
-    id: 'dh', world: 'K', icon: '🤝', title: 'Diffie-Hellman-Schlüsselaustausch',
+    id: 'dh', world: 'K', title: 'Diffie-Hellman-Schlüsselaustausch',
     short: 'Gemeinsames Geheimnis über einen öffentlichen Kanal – sicher gegen Eve, wehrlos gegen Mallory.',
     keywords: 'diffie hellman dhke schlüsselaustausch key agreement transkript mitm man in the middle hashed',
     challenges: { eve: { title: 'Als Eve: kleine Gruppe brechen', xp: 50 }, mitm: { title: 'Als Mallory: Man-in-the-Middle', xp: 80 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('Protokoll',
             UI.lib('DHKE (Gruppe G, Ordnung n, Erzeuger g)', ['Alice: a ← ℤₙ,  A := gᵃ      ──── A ────▶', '                              ◀──── B ────   Bob: b ← ℤₙ,  B := gᵇ', 'Alice: k := Bᵃ = gᵃᵇ                         Bob: k := Aᵇ = gᵃᵇ']),
@@ -34,7 +34,7 @@
           UI.callout('danger', 'Aktive Angreifer', 'DH allein authentifiziert niemanden. Mallory (aktiv) kann A und B austauschen und mit beiden Seiten getrennte Schlüssel vereinbaren (Man-in-the-Middle). Abhilfe: Signaturen/Zertifikate über die DH-Werte (TLS, SSH).'),
           UI.callout('info', 'Farbmisch-Analogie', 'Gemeinsame Grundfarbe (g) + geheime Farbe → Mischung lässt sich verschicken; Entmischen (diskreter Log) ist schwer, Weitermischen leicht.'));
       } },
-      { title: '🧪 Labor', render(el) {
+      { title: 'Labor', render(el) {
         let gk = 'tiny';
         const box = h('div');
         const draw = () => {
@@ -48,21 +48,21 @@
             const kA = NT.modPow(Bv, a, G.p), kB = NT.modPow(A, b, G.p);
             const eveOut = h('div');
             view.append(h('div', { class: 'people' },
-              h('div', { class: 'person' }, h('div', { class: 'p-head' }, h('span', { class: 'p-ava' }, '👩'), 'Alice'),
+              h('div', { class: 'person' }, h('div', { class: 'p-head' }, h('span', { class: 'p-ava' }, 'A'), 'Alice'),
                 UI.field('geheim a', UI.input({ value: a.toString(), mono: true, w: 'full', oninput: (v) => { try { a = B(v); } catch (e) { /* */ } } })),
                 h('div', { class: 'msg' }, 'A = gᵃ = ' + fmt(A)), h('div', { class: 'msg' }, 'k = Bᵃ = ' + fmt(kA))),
-              h('div', { class: 'channel' }, h('b', null, '📡 Öffentlicher Kanal (Eve liest mit)'),
+              h('div', { class: 'channel' }, h('b', null, 'Öffentlicher Kanal (Eve liest mit)'),
                 h('div', { class: 'msg' }, 'p = ' + fmt(G.p) + ', g = ' + G.g), h('div', { class: 'msg' }, 'Alice → Bob: A = ' + fmt(A)), h('div', { class: 'msg r' }, 'Bob → Alice: B = ' + fmt(Bv)),
-                h('div', { class: 'mt' }, UI.button('🕵️ Eve: diskreten Log versuchen', () => {
+                h('div', { class: 'mt' }, UI.button('Eve: diskreten Log versuchen', () => {
                   UI.clear(eveOut);
                   if (G.ord > 10n ** 7n) { eveOut.append(UI.callout('info', 'Aussichtslos', `Gruppenordnung ≈ 2^${G.ord.toString(2).length}. Brute Force bräuchte so viele Schritte; selbst das Zahlkörpersieb liegt bei ≈ 2¹¹² Operationen für 2048 Bit.`)); return; }
                   const t0 = performance.now(); const r = NT.dlogBrute(G.g, A, G.p, G.ord);
                   eveOut.append(UI.callout('danger', `Gebrochen in ${r.tries} Versuchen (${(performance.now() - t0).toFixed(1)} ms)`, `a = ${r.x} ⇒ k = Bᵃ = ${NT.modPow(Bv, r.x, G.p)}. Kleine Gruppen sind wertlos.`));
                 }, { sm: true })), eveOut),
-              h('div', { class: 'person' }, h('div', { class: 'p-head' }, h('span', { class: 'p-ava' }, '👨'), 'Bob'),
+              h('div', { class: 'person' }, h('div', { class: 'p-head' }, h('span', { class: 'p-ava' }, 'B'), 'Bob'),
                 UI.field('geheim b', UI.input({ value: b.toString(), mono: true, w: 'full', oninput: (v) => { try { b = B(v); } catch (e) { /* */ } } })),
                 h('div', { class: 'msg' }, 'B = gᵇ = ' + fmt(Bv)), h('div', { class: 'msg' }, 'k = Aᵇ = ' + fmt(kB)))),
-              h('div', { class: 'row mt' }, UI.button('Neu berechnen', upd, { kind: 'accent' }), kA === kB ? UI.status(true, 'beide haben denselben Schlüssel') : UI.status(false, 'verschieden?!'),
+              h('div', { class: 'row mt' }, UI.button('Neu berechnen', upd, { kind: 'accent' }), kA === kB ? UI.status(true, 'beide haben denselben Schlüssel') : UI.status(false, 'verschieden'),
                 h('span', { class: 'small muted' }, 'Hashed DH: K = SHA-256(k) = ' + U.hex(SHA.hash(U.utf8(kA.toString()))).slice(0, 32) + '…')));
           };
           upd();
@@ -71,7 +71,7 @@
         el.append(UI.card('Gruppe', UI.segmented(Object.entries(GROUPS).map(([k, v]) => [k, v.name]), gk, (v) => { gk = v; draw(); })), box);
         draw();
       } },
-      { title: '⚔️ Als Eve', render(el, ctx) {
+      { title: 'Als Eve', render(el, ctx) {
         const p = 1019n, g = 2n;
         const a = NT.randBetween(10n, 1000n), b = NT.randBetween(10n, 1000n);
         const A = NT.modPow(g, a, p), Bv = NT.modPow(g, b, p), k = NT.modPow(A, b, p);
@@ -80,11 +80,11 @@
           UI.kv([['p', String(p)], ['g', String(g)], ['A', String(A)], ['B', String(Bv)]]),
           h('p', null, 'Berechne das gemeinsame Geheimnis k = gᵃᵇ. (Hinweis: diskreten Log von A per Probieren finden, dann k = Bᵃ.)'),
           h('div', { class: 'card flat' }, h('b', null, 'Eves Werkzeug: gˣ mod p'), h('div', { class: 'row mt' }, xIn, UI.button('berechnen', () => { try { tOut.textContent = '= ' + NT.modPow(g, B(xIn.value), p); } catch (e) { tOut.textContent = '?'; } }, { sm: true }), tOut,
-            UI.button('🔎 alle x bis 1018 durchsuchen', () => { const r = NT.dlogBrute(g, A, p); tOut.textContent = `gˣ = A für x = ${r.x} (${r.tries} Versuche)`; }, { sm: true }))),
+            UI.button('alle x bis 1018 durchsuchen', () => { const r = NT.dlogBrute(g, A, p); tOut.textContent = `gˣ = A für x = ${r.x} (${r.tries} Versuche)`; }, { sm: true }))),
           h('div', { class: 'mt' }, T.answer('k =', (v) => { if (B(v || 0) === k) { ctx.solve('eve'); return true; } return 'nein'; })),
           h('div', { class: 'mt' }, T.calculator())));
       } },
-      { title: '⚔️ Als Mallory', render(el, ctx) {
+      { title: 'Als Mallory', render(el, ctx) {
         const G = GROUPS.small;
         const a = NT.randBetween(2n, G.ord - 1n), b = NT.randBetween(2n, G.ord - 1n), m = NT.randBetween(2n, G.ord - 1n);
         const A = NT.modPow(G.g, a, G.p), Bv = NT.modPow(G.g, b, G.p), M = NT.modPow(G.g, m, G.p);
@@ -117,17 +117,17 @@
             const bobReads = U.printable(AES.ctr(keyFrom(kBob), new Uint8Array(8), cBob));
             const ok = bobReads === secret && st.read === secret;
             actions.append(h('p', null, 'Bob entschlüsselt: ', h('b', null, bobReads)),
-              ok ? UI.callout('success', 'Perfekter Man-in-the-Middle', 'Mallory hat mitgelesen, Bob hat die richtige Nachricht erhalten – niemand hat etwas bemerkt. DH braucht Authentisierung!')
+              ok ? UI.callout('success', 'Man-in-the-Middle erfolgreich', 'Mallory hat mitgelesen, Bob hat die richtige Nachricht erhalten – niemand hat etwas bemerkt. DH allein authentisiert niemanden.')
                 : UI.callout('warning', 'Aufgeflogen oder nichts gelesen', bobReads !== secret ? 'Bob bekommt Datenmüll – er merkt, dass etwas nicht stimmt.' : 'Bob ist zufrieden, aber Mallory hat nichts mitgelesen.'),
               UI.button('Nochmal', () => ctx.goTab(3)));
             if (ok) ctx.solve('mitm');
           }
           view.append(h('div', { class: 'people' },
-            h('div', { class: 'person' }, h('div', { class: 'p-head' }, h('span', { class: 'p-ava' }, '👩'), 'Alice'), h('div', { class: 'small' }, `A = ${A}`), kAlice !== null ? h('div', { class: 'msg' }, `ihr k = ${kAlice}`) : null),
-            h('div', { class: 'channel' }, h('b', null, '😈 Mallory in der Leitung'), h('div', { class: 'small muted' }, `eigenes m geheim, M = ${M}`),
+            h('div', { class: 'person' }, h('div', { class: 'p-head' }, h('span', { class: 'p-ava' }, 'A'), 'Alice'), h('div', { class: 'small' }, `A = ${A}`), kAlice !== null ? h('div', { class: 'msg' }, `ihr k = ${kAlice}`) : null),
+            h('div', { class: 'channel' }, h('b', null, 'Kanal (Mallory kontrolliert ihn)'), h('div', { class: 'small muted' }, `eigenes m geheim, M = ${M}`),
               log.map(([w, t, evil]) => h('div', { class: 'msg' + (evil ? ' evil' : '') }, w + ': ' + t)),
               st.kAM !== null ? h('div', { class: 'msg evil' }, `k_A = ${st.kAM}`) : null, st.kBM !== null ? h('div', { class: 'msg evil' }, `k_B = ${st.kBM}`) : null),
-            h('div', { class: 'person' }, h('div', { class: 'p-head' }, h('span', { class: 'p-ava' }, '👨'), 'Bob'), h('div', { class: 'small' }, `B = ${Bv}`), kBob !== null ? h('div', { class: 'msg' }, `sein k = ${kBob}`) : null)),
+            h('div', { class: 'person' }, h('div', { class: 'p-head' }, h('span', { class: 'p-ava' }, 'B'), 'Bob'), h('div', { class: 'small' }, `B = ${Bv}`), kBob !== null ? h('div', { class: 'msg' }, `sein k = ${kBob}`) : null)),
             h('div', { class: 'card' }, h('h4', { style: { marginTop: 0 } }, `Schritt ${Math.min(step, 4)}`), actions));
         };
         el.append(UI.callout('tip', 'Ziel', 'Lies Alices Nachricht mit, ohne dass Bob etwas merkt. Gruppe: p = 2039, g = 4.'), view);
@@ -144,12 +144,12 @@
 
   // ======================================================================
   KQ.module({
-    id: 'ddh', world: 'K', icon: '⚖️', title: 'DLOG, CDH, DDH & Gruppenwahl',
+    id: 'ddh', world: 'K', title: 'DLOG, CDH, DDH & Gruppenwahl',
     short: 'Welche Annahme ist stärker? Warum Safe Primes und die QR-Untergruppe? Pohlig-Hellman und ein DDH-Unterscheider live.',
     keywords: 'dlog cdh ddh annahme safe prime quadratische reste pohlig hellman legendre untergruppe',
     challenges: { break: { title: 'DDH in ganz ℤₚ* brechen', xp: 70 }, qr: { title: 'QR-Erzeuger finden', xp: 30 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('Drei Annahmen',
             h('div', { class: 'grid c2' },
@@ -169,7 +169,7 @@
             h('p', null, h('b', null, 'Warum nicht ganz ℤₚ*?'), ' (1) Kleine Untergruppen (Faktoren von p − 1) erlauben ', h('b', null, 'Pohlig-Hellman'), ': dlog in jeder kleinen Untergruppe per Brute Force, dann per CRT kombinieren. (2) In ganz ℤₚ* ist ', h('b', null, 'DDH sogar gebrochen'), ': Das Legendre-Symbol verrät, ob gᵃᵇ ein quadratischer Rest ist – und das ist aus gᵃ, gᵇ vorhersagbar (ab gerade ⟺ a oder b gerade). In der QR-Untergruppe primer Ordnung gibt es beides nicht.')),
           UI.callout('exam', 'Rechenbeispiel p = 23', '|ℤ₂₃*| = 22 = 2·11 ⇒ Untergruppen der Ordnung 1, 2, 11, 22. 5 ist Erzeuger (5¹¹ = 22 ≠ 1, 5² = 2 ≠ 1). QR-Untergruppe (Ordnung 11) wird von 5² = 2 erzeugt.'));
       } },
-      { title: '🧪 Pohlig-Hellman', render(el) {
+      { title: 'Pohlig-Hellman', render(el) {
         const presets = [[8101n, 6n], [7919n, 7n], [1019n, 2n]];
         let pi = 0;
         const out = h('div');
@@ -187,7 +187,7 @@
           h('p', { class: 'small muted' }, 'p = 1019 ist eine Safe Prime: p − 1 = 2 · 509 – Pohlig-Hellman bringt fast nichts.')));
         draw();
       } },
-      { title: '⚔️ DDH-Spiel', render(el, ctx) {
+      { title: 'DDH-Spiel', render(el, ctx) {
         let sub = false;
         const box = h('div');
         const start = () => {
@@ -209,7 +209,7 @@
           UI.toggle('In der QR-Untergruppe spielen', sub, (v) => { sub = v; start(); })), box);
         start();
       } },
-      { title: '⚔️ Challenge', render(el, ctx) {
+      { title: 'Challenge', render(el, ctx) {
         el.append(UI.card('QR-Untergruppe von ℤ₂₃*',
           h('p', null, 'Gib ein Element der Ordnung 11 in ℤ₂₃* an (Erzeuger der Untergruppe der quadratischen Reste).'),
           T.answer('g =', (v) => { const g = +v; const o = NT.orderN(g, 23); if (o === 11) { ctx.solve('qr'); return true; } return o ? `Ordnung von ${g} ist ${o}` : 'kein Element von ℤ₂₃*'; })));
@@ -225,12 +225,12 @@
 
   // ======================================================================
   KQ.module({
-    id: 'ec', world: 'K', icon: '➰', title: 'Elliptische Kurven',
+    id: 'ec', world: 'K', title: 'Elliptische Kurven',
     short: 'y² = x³ + ax + b: Sekanten-Addition über ℝ und 𝔽ₚ, Gruppenstruktur, ECDLP.',
     keywords: 'elliptische kurven ecc weierstrass punktaddition ecdlp skalarmultiplikation edwards montgomery',
     challenges: { add: { title: 'Punkte addieren', xp: 40 }, ecdlp: { title: 'Kleinen ECDLP lösen', xp: 40 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('Weierstrass-Form',
             UI.formula('EC(a, b, p) = {(x, y) ∈ 𝔽ₚ² : y² = x³ + ax + b} ∪ {𝒪},    4a³ + 27b² ≠ 0'),
@@ -243,7 +243,7 @@
             h('p', null, 'Gegeben P und Q = n·P = P + … + P (n-mal): n zu berechnen ist schwer. Vorteil gegenüber ℤₚ*: gleiche Sicherheit bei viel kürzeren Schlüsseln (256-Bit-EC ≈ 3072-Bit-RSA/DH), weil es keine Index-Calculus-Angriffe gibt.'),
             h('p', { class: 'small muted' }, 'Weitere Formen: Edwards x² + y² = 1 + d·x²y², Montgomery by² = x³ + ax² + x (z. B. Curve25519) – schnellere, leichter konstant-zeitige Formeln.')));
       } },
-      { title: '🧪 Über ℝ', render(el) {
+      { title: 'Über ℝ', render(el) {
         let a = -2, b = 2, x1 = -1.5, x2 = 0.5, s1 = 1, s2 = -1;
         const W = 560, Hh = 400, X0 = -3.2, X1 = 4, Y0 = -7, Y1 = 7;
         const cv = h('canvas', { width: W * 2, height: Hh * 2, class: 'viz', style: { maxWidth: W + 'px', aspectRatio: `${W}/${Hh}` } });
@@ -270,7 +270,7 @@
             dot(Rm, UI.css('--text-3'), '−R'); dot(R, UI.css('--danger'), 'R = P + Q');
           }
           dot(P, UI.css('--c-key'), 'P'); dot(Q, UI.css('--c-nonce'), 'Q');
-          info.append(UI.kv([['P', P.map((v) => v.toFixed(3)).join(', ')], ['Q', Q.map((v) => v.toFixed(3)).join(', ')], ['R = P + Q', R ? R.map((v) => v.toFixed(3)).join(', ') : '𝒪 (senkrechte Gerade)'], ['4a³ + 27b²', String(4 * a ** 3 + 27 * b * b) + (4 * a ** 3 + 27 * b * b === 0 ? ' ⇒ singulär!' : '')]]));
+          info.append(UI.kv([['P', P.map((v) => v.toFixed(3)).join(', ')], ['Q', Q.map((v) => v.toFixed(3)).join(', ')], ['R = P + Q', R ? R.map((v) => v.toFixed(3)).join(', ') : '𝒪 (senkrechte Gerade)'], ['4a³ + 27b²', String(4 * a ** 3 + 27 * b * b) + (4 * a ** 3 + 27 * b * b === 0 ? ' ⇒ singulär' : '')]]));
         };
         el.append(UI.card('Sekantenkonstruktion',
           h('div', { class: 'row' }, UI.slider({ label: 'a', min: -5, max: 3, step: 0.5, value: a, oninput: (v) => { a = v; draw(); } }), UI.slider({ label: 'b', min: -3, max: 5, step: 0.5, value: b, oninput: (v) => { b = v; draw(); } })),
@@ -280,7 +280,7 @@
           h('p', { class: 'small muted' }, 'Tipp: Setze x(P) = x(Q) auf dieselbe Seite → Tangente (Verdopplung). Gegenüberliegende Seiten → senkrechte Gerade, R = 𝒪.')));
         requestAnimationFrame(draw);
       } },
-      { title: '🧪 Über 𝔽ₚ', render(el) {
+      { title: 'Über 𝔽ₚ', render(el) {
         let p = 17, a = 2, b = 2, Pi = 0, Qi = 1, n = 1;
         const out = h('div');
         const draw = () => {
@@ -312,7 +312,7 @@
           h('p', { class: 'small muted' }, 'Voreinstellung y² = x³ + 2x + 2 über 𝔽₁₇: 19 Punkte, Gruppe ist zyklisch (Paar/Pelzl).')));
         draw();
       } },
-      { title: '⚔️ Challenges', render(el, ctx) {
+      { title: 'Challenges', render(el, ctx) {
         const c = EC.curve(2, 2, 17);
         const pts = EC.points(c);
         let P = U.pick(pts), Q = U.pick(pts);
@@ -341,12 +341,12 @@
 
   // ======================================================================
   KQ.module({
-    id: 'rsa', world: 'K', icon: '🔑', title: 'RSA & Faktorisierungsangriffe',
+    id: 'rsa', world: 'K', title: 'RSA & Faktorisierungsangriffe',
     short: 'KeyGen, Ver-/Entschlüsselung, Korrektheit nach Euler – und drei Arten, schlecht gewähltes RSA zu brechen.',
     keywords: 'rsa faktorisierung probedivision ggt angriff gemeinsamer primfaktor kleines e kubikwurzel euler',
     challenges: { trial: { title: 'Probedivision', xp: 60 }, gcd: { title: 'ggT-Angriff', xp: 60 }, cube: { title: 'Kubikwurzel-Angriff', xp: 50 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('RSA (Rivest, Shamir, Adleman 1977)',
             h('ol', null, h('li', null, 'wähle Primzahlen p, q; n = p·q'), h('li', null, 'wähle e, d mit e·d ≡ 1 (mod φ(n)), φ(n) = (p−1)(q−1)'), h('li', null, 'pk = (e, n), sk = (d, n)')),
@@ -364,7 +364,7 @@
               h('li', null, h('b', null, 'Homomorph/malleable: '), 'Enc(m₀)·Enc(m₁) = (m₀m₁)ᵉ ⇒ nicht CCA-sicher.')),
             h('p', { class: 'muted' }, '→ Station „Malleability, FO & OAEP“. Quantencomputer: Shor faktorisiert effizient.')));
       } },
-      { title: '🧪 Labor', render(el) {
+      { title: 'Labor', render(el) {
         const pIn = UI.input({ value: '37', mono: true, w: 'l' }), qIn = UI.input({ value: '17', mono: true, w: 'l' }), eIn = UI.input({ value: '5', mono: true, w: 'm' });
         const mIn = UI.input({ value: '123', mono: true, w: 'l' });
         const out = h('div');
@@ -388,11 +388,11 @@
         el.append(UI.card('Schlüssel erzeugen, ver- und entschlüsseln',
           h('div', { class: 'row' }, UI.field('p', pIn), UI.field('q', qIn), UI.field('e', eIn)),
           h('div', { class: 'row mt' }, UI.field('Nachricht m (Zahl oder Text)', mIn), UI.button('Rechnen', run, { kind: 'accent' }),
-            UI.button('🎲 Zufällige 512-Bit-Primzahlen', () => { pIn.value = NT.randomPrime(512).toString(); qIn.value = NT.randomPrime(512).toString(); eIn.value = '65537'; mIn.value = 'Hallo RSA'; run(); })),
+            UI.button('Zufällige 512-Bit-Primzahlen', () => { pIn.value = NT.randomPrime(512).toString(); qIn.value = NT.randomPrime(512).toString(); eIn.value = '65537'; mIn.value = 'Hallo RSA'; run(); })),
           out));
         run();
       } },
-      { title: '⚔️ Challenges', render(el, ctx) {
+      { title: 'Challenges', render(el, ctx) {
         const n1 = 37137n, e1 = 1021n; const m1 = NT.randBetween(1000n, 30000n); const c1 = NT.modPow(m1, e1, n1);
         const N1 = 7493n, N2 = 7729n, e2 = 17n; const m2 = NT.randBetween(1000n, 7000n); const c2 = NT.modPow(m2, e2, N1);
         const card3 = h('div');
@@ -429,12 +429,12 @@
   // ======================================================================
   const EG = { p: 1019n, g: 2n, q: 1018n };
   KQ.module({
-    id: 'elgamal', world: 'K', icon: '📮', title: 'ElGamal',
+    id: 'elgamal', world: 'K', title: 'ElGamal',
     short: 'Public-Key-Verschlüsselung aus Diffie-Hellman: probabilistisch, CPA-sicher unter DDH – aber malleable.',
     keywords: 'elgamal public key verschlüsselung probabilistisch dhke ddh malleable',
     challenges: { decrypt: { title: 'Entschlüsseln', xp: 40 }, reuse: { title: 'r wiederverwendet', xp: 50 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('Verfahren (Gruppe G, Ordnung n, Erzeuger g)',
             UI.lib('ElGamal', ['KeyGen(): sk = x ← ℤₙ;  pk = y = gˣ', 'Enc(y, m): r ← ℤₙ;  c₁ = gʳ;  c₂ = yʳ · m;  return (c₁, c₂)', 'Dec(x, (c₁, c₂)): m = (c₁ˣ)⁻¹ · c₂']),
@@ -444,7 +444,7 @@
             h('p', null, 'ElGamal ist also ein DH-Austausch, bei dem der Empfänger seine Hälfte vorab veröffentlicht – und k als One-Time-Pad (multiplikativ) für m dient.')),
           UI.callout('warning', 'Malleable', '(c₁, k·c₂) entschlüsselt zu k·m – ohne m oder sk zu kennen. Und r darf nie wiederverwendet werden.'));
       } },
-      { title: '🧪 Labor', render(el) {
+      { title: 'Labor', render(el) {
         let gk = 'small';
         const out = h('div');
         const draw = () => {
@@ -471,7 +471,7 @@
         el.append(UI.card('ElGamal ausprobieren', UI.segmented([['small', 'klein: p = 1019'], ['big', 'MODP-2048']], gk, (v) => { gk = v; draw(); }), out));
         draw();
       } },
-      { title: '⚔️ Challenges', render(el, ctx) {
+      { title: 'Challenges', render(el, ctx) {
         const { p, g, q } = EG;
         const x = NT.randBetween(2n, q - 1n), y = NT.modPow(g, x, p);
         const m = NT.randBetween(2n, 1000n), r = NT.randBetween(2n, q - 1n);
@@ -518,12 +518,12 @@
   })();
 
   KQ.module({
-    id: 'pkcca', world: 'K', icon: '🧨', title: 'Malleability, CPA/CCA bei PKE, Fujisaki-Okamoto & OAEP',
+    id: 'pkcca', world: 'K', title: 'Malleability, CPA/CCA bei PKE, Fujisaki-Okamoto & OAEP',
     short: 'Versiegelte Gebote verdoppeln, Textbook-RSA im CPA-Spiel brechen – und sehen, wie FO und OAEP das verhindern.',
     keywords: 'malleability homomorph auktion pk-cpa 1cpa 1cca cca fujisaki okamoto oaep padding rsa elgamal',
     challenges: { cpa: { title: 'Textbook-RSA im CPA-Spiel', xp: 50 }, double: { title: 'Gebot verdoppeln', xp: 50 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('PK-CPA',
             UI.lib('PK-CPA (Links-oder-Rechts)', ['(pk, sk) := KeyGen(); b ← {0,1}', 'PK(): return pk', 'Enc(m₀, m₁): return Enc(pk, m_b)', 'Angreifer rät b′; Adv = |Pr[b′ = b] − ½| vernachlässigbar']),
@@ -540,7 +540,7 @@
           UI.card('RSA-OAEP',
             h('p', null, 'Löst dasselbe für RSA mit einer Feistel-artigen Konstruktion aus zwei Hashfunktionen G, H: X = (m ‖ 0ᵏ¹) ⊕ G(r), Y = r ⊕ H(X), dann (X‖Y)ᵉ mod n. Vorteil der Feistel-Struktur: invertierbar, obwohl G und H es nicht sind. Padding bei RSA (1) randomisiert, (2) zerstört die Homomorphie, (3) verhindert mᵉ < n.')));
       } },
-      { title: '🧪 Auktion', render(el) {
+      { title: 'Auktion', render(el) {
         const k = rsaKey();
         let scheme = 'rsa';
         const out = h('div');
@@ -564,7 +564,7 @@
         el.append(UI.card(`Versiegeltes Gebot: ${bid} €`, UI.segmented([['rsa', 'Textbook-RSA'], ['eg', 'ElGamal'], ['fo', 'ElGamal + Fujisaki-Okamoto']], scheme, (v) => { scheme = v; draw(); }), h('div', { class: 'mt' }, out)));
         draw();
       } },
-      { title: '⚔️ CPA-Spiel', render(el, ctx) {
+      { title: 'CPA-Spiel', render(el, ctx) {
         const k = rsaKey();
         el.append(UI.callout('info', 'Textbook-RSA im PK-CPA-Spiel', `pk = (e = ${k.e}, n = ${fmt(k.n)}). Wähle m₀, m₁, erhalte Enc(pk, m_b) und rate b. Den öffentlichen Schlüssel darfst du selbst benutzen.`));
         T.distGame(el, {
@@ -582,7 +582,7 @@
           onWin: () => ctx.solve('cpa'),
         });
       } },
-      { title: '⚔️ Als Mallory', render(el, ctx) {
+      { title: 'Als Mallory', render(el, ctx) {
         const k = rsaKey();
         const bid = NT.randBetween(100n, 5000n);
         const c = NT.modPow(bid, k.e, k.n);
@@ -603,12 +603,12 @@
 
   // ======================================================================
   KQ.module({
-    id: 'hybrid', world: 'K', icon: '📦', title: 'Hybride Verschlüsselung & KEM',
+    id: 'hybrid', world: 'K', title: 'Hybride Verschlüsselung & KEM',
     short: 'Asymmetrisch nur den Schlüssel, symmetrisch die Daten – plus Forward Secrecy in TLS.',
     keywords: 'hybrid kem key encapsulation tls forward secrecy dhe ecdhe rsa-kem elgamal-kem',
     challenges: { fs: { title: 'Forward Secrecy verstehen', xp: 40 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('Hybride Verschlüsselung',
             UI.lib('Σ_HybEnc', ['Enc(pk, m): k ← Σ_PKE.K', '            c_PKE := Σ_PKE.Enc(pk, k);  c_SKE := Σ_SKE.Enc(k, m)', '            return (c_PKE, c_SKE)', 'Dec(sk, (c_PKE, c_SKE)): k := Σ_PKE.Dec(sk, c_PKE); if k == ⊥: return ⊥', '            return Σ_SKE.Dec(k, c_SKE)']),
@@ -622,7 +622,7 @@
               h('li', null, h('b', null, 'TLS-DHE/ECDHE (Key Agreement): '), 'ephemere DH-Schlüssel pro Sitzung, danach gelöscht ⇒ ', h('b', null, 'Forward Secrecy'), '.'),
               h('li', null, 'KEM-basierte Cipher-Suites (z. B. post-quantum ML-KEM) setzen Encaps/Decaps direkt ein.'))));
       } },
-      { title: '🧪 Pipeline', render(el) {
+      { title: 'Pipeline', render(el) {
         const k = rsaKey();
         let msg = 'Dies ist eine lange vertrauliche Nachricht, die effizient symmetrisch verschlüsselt wird.';
         let kem = 'rsa';
@@ -645,7 +645,7 @@
           h('div', { class: 'mt' }, UI.textarea({ value: msg, oninput: (v) => { msg = v; draw(); } })), out));
         draw();
       } },
-      { title: '⚔️ Challenge', render(el, ctx) {
+      { title: 'Challenge', render(el, ctx) {
         const sessions = [['S1', 'RSA-Key-Transport'], ['S2', 'ECDHE (ephemer)'], ['S3', 'RSA-Key-Transport'], ['S4', 'DHE (ephemer)'], ['S5', 'RSA-Key-Transport']];
         const sel = new Set(); const r = h('div');
         el.append(UI.card('Ein Jahr später: der langfristige RSA-Schlüssel des Servers wird gestohlen',

@@ -6,12 +6,12 @@
 
   // ======================================================================
   KQ.module({
-    id: 'exam', world: 'N', icon: '🏆', title: 'Prüfungs-Sprint',
+    id: 'exam', world: 'N', title: 'Prüfungs-Sprint',
     short: 'Zufällige Fragen aus allen Stationen, mit Zeitmessung und Auswertung nach Themen.',
     keywords: 'prüfung klausur quiz sprint test wiederholung',
     challenges: { pass: { title: '≥ 80 % bei ≥ 20 Fragen', xp: 100 } },
     tabs: [
-      { title: '🏁 Sprint', render(el, ctx) {
+      { title: 'Sprint', render(el, ctx) {
         const pool = KQ.modules.filter((m) => m.world !== 'N').flatMap((m) => m.quiz.map((q, i) => ({ q, m, i })));
         let count = 20, worlds = new Set(KQ.worlds.map((w) => w.id));
         const box = h('div');
@@ -25,12 +25,12 @@
         };
         const run = () => {
           const qs = U.shuffle(pool.filter((x) => worlds.has(x.m.world))).slice(0, count);
-          if (!qs.length) { UI.toast('Keine Fragen', 'Mindestens eine Welt wählen.', '⚠️'); return; }
+          if (!qs.length) { UI.toast('Keine Fragen', 'Mindestens eine Welt wählen.', ''); return; }
           UI.clear(box);
           let i = 0, right = 0; const wrong = [];
           const t0 = Date.now();
           const timer = h('span', { class: 'chip accent' });
-          UI.interval(() => { const s = Math.floor((Date.now() - t0) / 1000); timer.textContent = `⏱ ${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; }, 500);
+          UI.interval(() => { const s = Math.floor((Date.now() - t0) / 1000); timer.textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`; }, 500);
           const area = h('div');
           const head = h('div', { class: 'row between' });
           box.append(head, area);
@@ -90,11 +90,11 @@
   ];
 
   KQ.module({
-    id: 'matching', world: 'N', icon: '🧷', title: 'Zuordnungsspiele',
+    id: 'matching', world: 'N', title: 'Zuordnungsspiele',
     short: 'Angriffe, Schutzziele, Sicherheitsspiele und Beweistechniken richtig zusammenbringen.',
     keywords: 'zuordnen matching angriffe schutzziele spiele beweise übersicht',
     challenges: Object.fromEntries(MATCHES.map((g) => [g.id, { title: g.title, xp: 40 }])),
-    tabs: MATCHES.map((g) => ({ title: '🧩 ' + g.title.split('→')[0].trim(), render(el, ctx) {
+    tabs: MATCHES.map((g) => ({ title: g.title.split('→')[0].trim(), render(el, ctx) {
       const left = U.shuffle(g.pairs.map((p, i) => [i, p[0]])), right = U.shuffle(g.pairs.map((p, i) => [i, p[1]]));
       const assign = {}; let sel = null;
       const grid = h('div'), res = h('div');
@@ -147,10 +147,10 @@
   ];
 
   KQ.module({
-    id: 'spickzettel', world: 'N', icon: '📋', title: 'Interaktiver Spickzettel',
+    id: 'spickzettel', world: 'N', title: 'Interaktiver Spickzettel',
     short: 'Alle Formeln, Tabellen und Merksätze an einem Ort – durchsuchbar.',
     keywords: 'spickzettel cheat sheet formeln übersicht tabellen zusammenfassung',
-    tabs: [{ title: '📋 Übersicht', render(el) {
+    tabs: [{ title: 'Übersicht', render(el) {
       const out = h('div');
       const draw = (q) => {
         UI.clear(out);
@@ -162,7 +162,7 @@
         });
         if (!out.childNodes.length) out.append(h('p', { class: 'muted' }, 'Nichts gefunden.'));
       };
-      el.append(h('div', { class: 'row' }, UI.input({ placeholder: 'Filtern, z. B. „RSA“ oder „CBC“', w: 'l', oninput: (v) => draw(v) }), UI.button('🖨️ Drucken', () => window.print())), out);
+      el.append(h('div', { class: 'row' }, UI.input({ placeholder: 'Filtern, z. B. „RSA“ oder „CBC“', w: 'l', oninput: (v) => draw(v) }), UI.button('Drucken', () => window.print())), out);
       draw('');
     } }],
   });

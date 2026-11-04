@@ -4,6 +4,13 @@
   const KQ = (root.KQ = root.KQ || {});
   const UI = (KQ.ui = {});
 
+  // Element.append() würde null/undefined als Text „null“ einfügen – optionale Kinder hier herausfiltern
+  if (root.Element && !root.Element.prototype.__kqAppend) {
+    const orig = root.Element.prototype.append;
+    root.Element.prototype.append = function (...nodes) { return orig.apply(this, nodes.filter((n) => n !== null && n !== undefined && n !== false)); };
+    root.Element.prototype.__kqAppend = true;
+  }
+
   /** h('div', {class, style, onclick, html, ...attrs}, ...children) */
   const h = (UI.h = (tag, props, ...children) => {
     const el = document.createElement(tag);
@@ -54,13 +61,12 @@
 
   UI.flat = (...children) => h('div', { class: 'card flat' }, ...children);
 
-  const CO_ICONS = { info: 'ℹ️', success: '✅', warning: '⚠️', danger: '⛔', exam: '🎓', errata: '📝', tip: '💡' };
+  const CO_LABELS = { info: 'Hinweis', success: 'Ergebnis', warning: 'Hinweis', danger: 'Achtung', exam: 'Klausur', errata: 'Erratum', tip: 'Tipp' };
   UI.callout = (kind, title, body) =>
     h('div', { class: 'callout ' + kind },
-      h('div', { class: 'co-icon' }, CO_ICONS[kind] || 'ℹ️'),
-      h('div', { class: 'co-body' },
-        title ? h('div', { class: 'co-title' }, title) : null,
-        typeof body === 'string' ? h('div', { html: body }) : body));
+      h('div', { class: 'co-label' }, CO_LABELS[kind] || 'Hinweis'),
+      title ? h('div', { class: 'co-title' }, title) : null,
+      typeof body === 'string' ? (body ? h('div', { html: body }) : null) : body);
 
   UI.formula = (txt) => h('div', { class: 'formula', html: txt });
 
@@ -196,7 +202,7 @@
     const label = h('span', { class: 'stepper-label' });
     const range = h('input', { type: 'range', min: 0, max: Math.max(0, count - 1), value: i });
     const body = h('div', { class: 'mt' });
-    const playBtn = UI.button('▶ Abspielen', () => (timer ? stop() : play()), { sm: true });
+    const playBtn = UI.button('Abspielen', () => (timer ? stop() : play()), { sm: true });
     const go = (k) => {
       i = Math.max(0, Math.min(count - 1, k));
       range.value = i;
@@ -204,19 +210,18 @@
       UI.clear(body);
       render(i, body);
     };
-    const stop = () => { clearInterval(timer); timer = null; playBtn.lastChild.textContent = 'Abspielen'; playBtn.firstChild.textContent = '▶'; };
+    const stop = () => { clearInterval(timer); timer = null; playBtn.textContent = 'Abspielen'; };
     const play = () => {
       if (i >= count - 1) go(0);
       timer = setInterval(() => { if (i >= count - 1) stop(); else go(i + 1); }, opts.interval || 700);
-      playBtn.firstChild.textContent = '⏸'; playBtn.lastChild.textContent = 'Pause';
+      playBtn.textContent = 'Pause';
     };
-    playBtn.innerHTML = '<span>▶</span><span>Abspielen</span>';
     range.addEventListener('input', () => { stop(); go(+range.value); });
     const bar = h('div', { class: 'stepper-bar' },
-      UI.button('⏮', () => { stop(); go(0); }, { sm: true, title: 'Anfang' }),
-      UI.button('◀', () => { stop(); go(i - 1); }, { sm: true, title: 'Zurück' }),
-      UI.button('▶', () => { stop(); go(i + 1); }, { sm: true, title: 'Weiter' }),
-      UI.button('⏭', () => { stop(); go(count - 1); }, { sm: true, title: 'Ende' }),
+      UI.button('«', () => { stop(); go(0); }, { sm: true, title: 'Anfang' }),
+      UI.button('‹ zurück', () => { stop(); go(i - 1); }, { sm: true, title: 'Zurück' }),
+      UI.button('weiter ›', () => { stop(); go(i + 1); }, { sm: true, title: 'Weiter' }),
+      UI.button('»', () => { stop(); go(count - 1); }, { sm: true, title: 'Ende' }),
       playBtn, range, label);
     const wrap = h('div', null, bar, body);
     wrap.go = go;
@@ -239,11 +244,10 @@
   UI.kv = (pairs) => h('div', { class: 'kv' }, pairs.flatMap(([k, v]) => [h('div', null, k), h('div', null, v instanceof Node ? v : String(v))]));
 
   // ---------- Toast / Modal / Konfetti ----------
-  UI.toast = (title, body, icon = '✨', ms = 4200) => {
+  UI.toast = (title, body, _unused, ms = 4200) => {
     let host = document.querySelector('.toasts');
     if (!host) { host = h('div', { class: 'toasts' }); document.body.appendChild(host); }
-    const t = h('div', { class: 'toast', role: 'status' }, h('div', { class: 't-icon' }, icon),
-      h('div', null, h('div', { class: 't-title' }, title), body ? h('div', { class: 't-body', html: body }) : null));
+    const t = h('div', { class: 'toast', role: 'status' }, h('div', { class: 't-title' }, title), body ? h('div', { class: 't-body', html: body }) : null);
     host.appendChild(t);
     setTimeout(() => t.remove(), ms);
   };
@@ -259,18 +263,7 @@
     return close;
   };
 
-  UI.confetti = (x, y) => {
-    const icons = ['🔑', '✨', '🔐', '⭐', '🎉', '🧩'];
-    for (let i = 0; i < 14; i++) {
-      const c = h('div', { class: 'confetti' }, icons[i % icons.length]);
-      c.style.left = (x ?? innerWidth / 2) + 'px';
-      c.style.top = (y ?? innerHeight / 2) + 'px';
-      c.style.setProperty('--dx', (Math.random() * 360 - 180) + 'px');
-      c.style.setProperty('--dy', (Math.random() * -260 - 40) + 'px');
-      document.body.appendChild(c);
-      setTimeout(() => c.remove(), 1500);
-    }
-  };
+  UI.confetti = () => {}; // bewusst ohne Effekt
 
   /** Fortschrittsring als SVG */
   UI.ring = (frac, size = 44, stroke = 4) => {
@@ -339,7 +332,7 @@
   /** Nimmt ein Prüf-Ergebnis-Element und setzt Status */
   UI.resultBox = () => {
     const el = h('div', { class: 'mt' });
-    el.set = (ok, text) => { UI.clear(el); if (text) el.appendChild(ok === null ? h('div', { class: 'muted', html: text }) : UI.callout(ok ? 'success' : 'danger', ok ? 'Richtig!' : 'Noch nicht', text)); };
+    el.set = (ok, text) => { UI.clear(el); if (text) el.appendChild(ok === null ? h('div', { class: 'muted', html: text }) : UI.callout(ok ? 'success' : 'danger', ok ? 'Richtig' : 'Noch nicht', text)); };
     return el;
   };
 })(typeof window !== 'undefined' ? window : globalThis);

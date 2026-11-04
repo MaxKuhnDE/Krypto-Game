@@ -16,7 +16,7 @@
   T.parseBig = parseBig;
 
   /** Modularer Taschenrechner (wie im Open-Book-Klausur-Setting erlaubt) */
-  T.calculator = (title = '🧮 Modularer Taschenrechner') => {
+  T.calculator = (title = 'Modularer Taschenrechner') => {
     const ops = [
       ['pow', 'aᵇ mod n', 3], ['inv', 'a⁻¹ mod n', 2], ['mul', 'a · b mod n', 3], ['add', 'a + b mod n', 3],
       ['sub', 'a − b mod n', 3], ['gcd', 'ggT(a, b)', 2], ['div', 'a / b (ganzzahlig) und Rest', 2],
@@ -61,7 +61,7 @@
           }
         }
         out.textContent = '= ' + r;
-      } catch (e) { out.textContent = '⚠ ' + e.message; }
+      } catch (e) { out.textContent = 'Fehler: ' + e.message; }
     };
     [A, Bv, N].forEach((i) => i.addEventListener('keydown', (e) => e.key === 'Enter' && calc()));
     layout();
@@ -95,7 +95,7 @@
         UI.clear(out);
         out.append(h('div', null, 'Hex:  ' + U.hex(r)), h('div', null, 'Text: ' + U.printable(r)));
         if (xs.some((x) => x.length !== len)) out.append(h('div', { class: 'small muted' }, `Hinweis: auf die kürzeste Länge (${len} Byte) gekürzt.`));
-      } catch (e) { out.textContent = '⚠ ' + e.message; }
+      } catch (e) { out.textContent = 'Fehler: ' + e.message; }
     };
     [a, b, c].forEach((i) => i.addEventListener('keydown', (e) => e.key === 'Enter' && run()));
     return h('div', { class: 'card flat' }, h('h4', { style: { marginTop: 0 } }, title), h('div', { class: 'col' }, a, b, c),

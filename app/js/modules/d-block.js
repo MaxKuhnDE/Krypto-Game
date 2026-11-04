@@ -6,12 +6,12 @@
 
   // ======================================================================
   KQ.module({
-    id: 'konfusion', world: 'D', icon: '🌪️', title: 'Konfusion, Diffusion & Avalanche',
+    id: 'konfusion', world: 'D', title: 'Konfusion, Diffusion & Avalanche',
     short: 'Shannons Bauprinzipien, Produktchiffren – und wie schnell sich ein gekipptes Bit in AES ausbreitet.',
     keywords: 'konfusion diffusion avalanche lawineneffekt produktchiffre s-box shannon runden',
     challenges: { sort: { title: 'Bausteine zuordnen', xp: 30 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('Blockchiffren',
             h('p', null, 'Verschlüsseln Blöcke fester Länge l (meist 128 Bit; 64 Bit gilt als unsicher – Sweet32). Die Nachricht wird in ⌈|m|/l⌉ Blöcke zerlegt, der letzte per Padding aufgefüllt. Zusammengesetzt werden sie über Betriebsmodi (Welt E).')),
@@ -23,7 +23,7 @@
             h('pre', { class: 'code' }, 'Input\n → Schlüssel-Addition 1\n → Konfusion → Diffusion        ┐\n → Schlüssel-Addition 2         │  n Runden\n → …                            ┘\n → Schlüssel-Addition n+1\nOutput'),
             h('p', null, 'Einzelne Komponenten sind schwach; erst die regelmäßige Wiederholung mit Rundenschlüsseln (vom Key-Scheduler aus dem Originalschlüssel abgeleitet) macht die Chiffre stark.')));
       } },
-      { title: '🧪 Avalanche-Labor', render(el) {
+      { title: 'Avalanche-Labor', render(el) {
         const key = U.fromHex('000102030405060708090a0b0c0d0e0f');
         let pt = U.fromHex('00112233445566778899aabbccddeeff');
         let flip = 0, target = 'pt';
@@ -48,11 +48,11 @@
         el.append(UI.card('Ein Bit kippen – welche Bits ändern sich?',
           h('div', { class: 'row' }, UI.segmented([['pt', 'im Klartext'], ['key', 'im Schlüssel']], target, (v) => { target = v; draw(); }),
             UI.slider({ label: 'Bit-Nummer', min: 0, max: 127, value: flip, oninput: (v) => { flip = v; draw(); } }),
-            UI.button('🎲 Zufälliger Klartext', () => { pt = U.randomBytes(16); draw(); }, { sm: true })),
+            UI.button('Zufälliger Klartext', () => { pt = U.randomBytes(16); draw(); }, { sm: true })),
           out));
         draw();
       } },
-      { title: '⚔️ Challenge', render(el, ctx) {
+      { title: 'Challenge', render(el, ctx) {
         const items = U.shuffle([
           ['AES SubBytes (S-Box)', 'K'], ['AES ShiftRows', 'D'], ['AES MixColumns', 'D'], ['Addition mod 2³² (ChaCha20)', 'K'],
           ['Rotation ⋘ n', 'D'], ['AND in der SIMON-F-Funktion', 'K'], ['Bitpermutation (DES P-Box)', 'D'], ['Multiplikatives Inverses in 𝔽₂⁸', 'K'],
@@ -103,12 +103,12 @@
   };
 
   KQ.module({
-    id: 'feistel', world: 'D', icon: '🪜', title: 'Feistel-Netzwerk',
+    id: 'feistel', world: 'D', title: 'Feistel-Netzwerk',
     short: 'Invertierbar, obwohl F es nicht ist: Runden visualisieren, entschlüsseln, Luby-Rackoff.',
     keywords: 'feistel netzwerk runden des luby rackoff prp invertierbar',
     challenges: { order: { title: 'Rundenschlüssel-Reihenfolge', xp: 30 }, collision: { title: 'F ist nicht bijektiv', xp: 30 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         const rk = [0x3a, 0xc5, 0x19];
         const tr = TOY.feistelEnc(0x4b, 0x51, rk, TOY.roundF, true);
         el.append(
@@ -119,12 +119,12 @@
                 h('p', null, 'Rᵢ läuft unverändert nach links und speist parallel F(Rᵢ, kᵢ); dessen Ausgabe wird mit Lᵢ ge-XOR-t und bildet die neue rechte Hälfte.'),
                 h('p', null, h('b', null, 'Entschlüsselung'), ' mit denselben Komponenten: aus Rₙ = Lₙ₋₁ ⊕ F(Rₙ₋₁, kₙ₋₁) und Lₙ = Rₙ₋₁ folgt'),
                 UI.formula('R<sub>n−1</sub> = L<sub>n</sub>,     L<sub>n−1</sub> = R<sub>n</sub> ⊕ F(L<sub>n</sub>, k<sub>n−1</sub>)'),
-                h('p', null, '⇒ Rundenschlüssel in ', h('b', null, 'umgekehrter Reihenfolge'), ' anwenden. F muss ', h('b', null, 'nicht'), ' invertierbar sein!')))),
+                h('p', null, '⇒ Rundenschlüssel in ', h('b', null, 'umgekehrter Reihenfolge'), ' anwenden. F muss ', h('b', null, 'nicht'), ' invertierbar sein.')))),
           UI.card('Luby-Rackoff',
             h('p', null, 'Ist F eine sichere PRF, dann ist das Feistel-Netzwerk mit ', h('b', null, '3 Runden eine PRP'), ' und mit 4 Runden eine starke PRP (auch mit Entschlüsselungsorakel). Mit 1 oder 2 Runden gibt es einfache Unterscheider – probiere sie in der Arena (Welt F) aus.'),
             UI.callout('warning', 'Praxis-Lücke', 'Reale Rundenfunktionen sind meist keine echten PRFs – der Satz begründet die Struktur, nicht die Sicherheit konkreter Chiffren. Beweis (Three-Hop + Bad-Event) in der Game-Hopping-Werkstatt.')));
       } },
-      { title: '🧪 Labor', render(el) {
+      { title: 'Labor', render(el) {
         let txt = 'Hi', nR = 4, keys = Array.from({ length: 8 }, () => U.randInt(0, 255)), fsel = 'toy', rev = true;
         const out = h('div');
         const draw = () => {
@@ -148,12 +148,12 @@
           h('div', { class: 'row' }, UI.field('Klartext (2 Zeichen)', UI.input({ value: txt, maxlength: 2, w: 's', oninput: (v) => { txt = v; draw(); } })),
             UI.slider({ label: 'Runden', min: 1, max: 8, value: nR, oninput: (v) => { nR = v; draw(); } }),
             UI.select(Object.entries(FS).map(([k, v]) => [k, v[1]]), fsel, (v) => { fsel = v; draw(); }),
-            UI.button('🎲 Neue Schlüssel', () => { keys = keys.map(() => U.randInt(0, 255)); draw(); }, { sm: true }),
+            UI.button('Neue Schlüssel', () => { keys = keys.map(() => U.randInt(0, 255)); draw(); }, { sm: true }),
             UI.toggle('Entschlüsseln mit umgekehrten Schlüsseln', rev, (v) => { rev = v; draw(); })),
           out));
         draw();
       } },
-      { title: '⚔️ Challenges', render(el, ctx) {
+      { title: 'Challenges', render(el, ctx) {
         const keys = Array.from({ length: 4 }, () => U.randInt(0, 255));
         const msg = 'GEHEIM';
         const blocks = U.chunk(Array.from(U.utf8(msg)), 2).map(([a, b]) => TOY.feistelEnc(a, b, keys));
@@ -207,12 +207,12 @@
 
   // ======================================================================
   KQ.module({
-    id: 'simon', world: 'D', icon: '🔧', title: 'SIMON – Feistel in Hardware',
+    id: 'simon', world: 'D', title: 'SIMON – Feistel in Hardware',
     short: 'NSA-Blockchiffre aus Rotationen, AND und XOR: Rundenfunktion und Key-Scheduler im Detail.',
     keywords: 'simon nsa leichtgewichtig feistel hardware key schedule rotation and',
     challenges: { f: { title: 'F(x) von Hand', xp: 40 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('SIMON (NSA, 2013)',
             h('p', null, 'Standard-Feistel mit extrem einfacher F-Funktion, optimiert für kleine und schnelle Hardware. 10 Varianten: Block 32–128 Bit, Schlüssel 64–256 Bit. Ein Block = 2 Wörter (L, R) à n Bit, Schlüssel = m ∈ {2, 3, 4} Wörter.'),
@@ -226,7 +226,7 @@
             h('p', null, 'Die ersten m Rundenschlüssel sind die Schlüsselwörter selbst. S = Rotation um 1 Bit nach links, I = Identität: (I ⊕ S⁻¹)(t) = t ⊕ (t ⋙ 1). c = 2ⁿ − 4 und die Bitfolge zⱼ sind Konstanten – sie brechen die Selbstähnlichkeit der Runden (Schutz gegen Slide-Angriffe).'),
             UI.callout('info', 'Testvektor (Simon-Paper)', 'Simon 32/64: Schlüssel 1918 1110 0908 0100, Klartext 6565 6877 ⇒ Chiffrat c69b e9bb – das Labor rechnet genau diesen Fall nach.')));
       } },
-      { title: '🧪 Labor', render(el) {
+      { title: 'Labor', render(el) {
         const kIn = UI.input({ value: '1918 1110 0908 0100', mono: true, w: 'l' }), pIn = UI.input({ value: '6565 6877', mono: true, w: 'm' });
         const out = h('div');
         const bits16 = (v, cls) => UI.bitrow(U.bits(v, 16), { group: 8, cls: cls ? (i, b) => (b === '1' ? cls : '') : undefined });
@@ -255,7 +255,7 @@
         el.append(UI.card('Simon 32/64', h('div', { class: 'row' }, UI.field('Schlüssel (k₃ k₂ k₁ k₀)', kIn), UI.field('Klartext (L R)', pIn), UI.button('Verschlüsseln', run, { kind: 'accent' })), out));
         run();
       } },
-      { title: '⚔️ Challenge', render(el, ctx) {
+      { title: 'Challenge', render(el, ctx) {
         let n = 0; const area = h('div');
         const draw = () => {
           UI.clear(area);
@@ -286,12 +286,12 @@
   };
 
   KQ.module({
-    id: 'aes', world: 'D', icon: '🧱', title: 'AES Schritt für Schritt',
+    id: 'aes', world: 'D', title: 'AES Schritt für Schritt',
     short: 'Echter AES-128 (FIPS 197): alle 41 Zwischenzustände, S-Box-Herleitung, MixColumns-Rechnung, Key-Expansion.',
     keywords: 'aes rijndael subbytes shiftrows mixcolumns addroundkey key expansion sbox fips 197',
     challenges: { shiftrows: { title: 'ShiftRows vorhersagen', xp: 30 }, mixcol: { title: 'MixColumns-Byte rechnen', xp: 50 }, order: { title: 'Rundenaufbau', xp: 30 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('Überblick',
             h('p', null, '128-Bit-Block, Schlüssel 128/192/256 Bit mit 10/12/14 Runden. NIST-Standard seit 2001 (FIPS 197), Nachfolger von DES/3DES. Substitutions-Permutations-Netzwerk (SPN) – kein Feistel.'),
@@ -303,7 +303,7 @@
             ['MixColumns', 'Spalten', 'Diffusion innerhalb der Spalte (Matrix mit 01, 02, 03 = 1, x, x+1)'],
           ], { wrap: false }),
           UI.card('Rundenstruktur',
-            h('pre', { class: 'code' }, 'AddRoundKey(k₀)\nRunde 1 … n−1:  SubBytes → ShiftRows → MixColumns → AddRoundKey(kᵢ)\nRunde n:        SubBytes → ShiftRows → AddRoundKey(kₙ)      ← kein MixColumns!'),
+            h('pre', { class: 'code' }, 'AddRoundKey(k₀)\nRunde 1 … n−1:  SubBytes → ShiftRows → MixColumns → AddRoundKey(kᵢ)\nRunde n:        SubBytes → ShiftRows → AddRoundKey(kₙ)      ← ohne MixColumns'),
             h('ul', { class: 'tight' },
               h('li', null, h('b', null, 'n + 1 Rundenschlüssel: '), 'Ohne die erste Schlüsseladdition böte Runde 1 keinen Schutz (die anderen Schritte sind öffentlich und invertierbar); ohne die letzte genauso Runde n.'),
               h('li', null, h('b', null, 'Letzte Runde ohne MixColumns: '), 'macht Ver- und Entschlüsselung strukturähnlicher (Dunkelman et al.: erleichtert manche Angriffe minimal).'),
@@ -314,7 +314,7 @@
               h('li', null, h('b', null, 'Implementierung: '), 'Cache-Timing (Tabellen-Lookups!), Correlation Power Analysis, Differential Fault Injection in Runde 8 bricht AES-128 vollständig.'),
               h('li', null, h('b', null, 'Quantencomputer: '), 'Shor nicht anwendbar. Grover halbiert nur die effektive Schlüssellänge: AES-128 → 2⁶⁴, AES-256 → 2¹²⁸ ⇒ AES-256 gilt als quantensicher.'))));
       } },
-      { title: '🧪 Runden-Explorer', render(el) {
+      { title: 'Runden-Explorer', render(el) {
         const kIn = UI.input({ value: '2b7e151628aed2a6abf7158809cf4f3c', mono: true, w: 'l' });
         const pIn = UI.input({ value: '3243f6a8885a308d313198a2e0370734', mono: true, w: 'l' });
         const out = h('div');
@@ -360,7 +360,7 @@
         el.append(UI.card('Eingabe (Standard: FIPS 197 Anhang B)', h('div', { class: 'row' }, UI.field('Schlüssel', kIn), UI.field('Klartext', pIn), UI.button('Verschlüsseln', run, { kind: 'accent' }))), out);
         run();
       } },
-      { title: '🧪 S-Box & Key-Expansion', render(el) {
+      { title: 'S-Box & Key-Expansion', render(el) {
         const det = h('div');
         const show = (b) => { UI.clear(det); const t = AES.sboxTrace(b); det.append(UI.kv([['Eingabe', '0x' + U.hex8(b) + ' = ' + GF.poly(b)], ['Inverses in 𝔽₂⁸', '0x' + U.hex8(t.inverse) + ' = ' + GF.poly(t.inverse)], ['affine Abbildung', `→ 0x${U.hex8(t.output)}`]])); };
         const key = U.fromHex('2b7e151628aed2a6abf7158809cf4f3c');
@@ -372,7 +372,7 @@
             UI.table(['i', 'w[i−1]', 'RotWord', 'SubWord', 'Rcon', '⊕ w[i−4]', '= w[i]'], ex.trace.map((t) => [t.i, U.hex(t.prev), t.rot ? U.hex(t.rot) : '', t.sub ? U.hex(t.sub) : '', t.rcon ? U.hex8(t.rcon) : '', U.hex(t.wMinus4), '<b>' + U.hex(t.result) + '</b>']), { mono: true, maxHeight: '380px' })));
         show(0x53);
       } },
-      { title: '⚔️ Challenges', render(el, ctx) {
+      { title: 'Challenges', render(el, ctx) {
         // ShiftRows
         const st = U.randomBytes(16);
         const sr = AES.shiftRows(st);

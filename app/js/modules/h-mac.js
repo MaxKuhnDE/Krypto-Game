@@ -15,12 +15,12 @@
 
   // ======================================================================
   KQ.module({
-    id: 'mac', world: 'H', icon: '🏷️', title: 'MACs & CBC-MAC',
+    id: 'mac', world: 'H', title: 'MACs & CBC-MAC',
     short: 'Integrität statt Vertraulichkeit: MAC-Spiel, CBC-MAC, der Längenangriff und die Fixes ECBC/FCBC/CMAC.',
     keywords: 'mac message authentication code cbc-mac ecbc fcbc cmac längenerweiterung prefix integrität',
     challenges: { forge: { title: 'CBC-MAC fälschen', xp: 70 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('MAC-Sicherheit als Spiel',
             h('div', { class: 'grid c2' },
@@ -43,7 +43,7 @@
             ], { wrap: false }),
             h('p', { class: 'small muted' }, 'CBC-MAC ohne Prefix ist eine universelle Hashfunktion (UHF), aber keine PRF für variable Länge – mit einer zweiten PRF dahinter (UH-PRF) wird es sicher (Welt J).')));
       } },
-      { title: '🧪 CBC-MAC-Rechner', render(el) {
+      { title: 'CBC-MAC-Rechner', render(el) {
         const key = U.randomBytes(16);
         let txt = 'Zahle 100 EUR an Bob. Danke!';
         const out = h('div');
@@ -56,7 +56,7 @@
         el.append(UI.card('CBC-MAC mit AES (Nullen-Padding für die Demo)', UI.input({ value: txt, w: 'full', oninput: (v) => { txt = v; draw(); } }), out));
         draw();
       } },
-      { title: '⚔️ Challenge: Fälschung', render(el, ctx) {
+      { title: 'Challenge: Fälschung', render(el, ctx) {
         const key = U.randomBytes(16);
         const revealed = new Set();
         const m1 = U.utf8('Bestellung: 1 x '), m2 = U.utf8('Laptop, zahlbar.');
@@ -66,13 +66,13 @@
         const tagIn = UI.input({ mono: true, w: 'l', placeholder: 'Tag (Hex)' });
         const res = h('div');
         let prefix = false;
-        el.append(UI.card('Der Shop prüft Bestellungen per CBC-MAC',
+        el.append(UI.card('Shop mit CBC-MAC-Prüfung',
           h('p', null, 'Du hast zwei legitim signierte Ein-Block-Nachrichten beobachtet:'),
           UI.kv([['m₁', U.hex(m1) + `  („${U.fromUtf8(m1)}“)`], ['t₁', U.hex(t1)], ['m₂', U.hex(m2) + `  („${U.fromUtf8(m2)}“)`], ['t₂', U.hex(t2)]]),
           h('p', null, 'Ziel: Reiche eine ', h('b', null, 'neue'), ' Nachricht mit gültigem Tag ein, ohne den Schlüssel zu kennen.'),
           UI.field('Nachricht (Hex)', msgIn), h('div', { class: 'mt' }, UI.field('Tag (Hex)', tagIn)),
           h('div', { class: 'row mt' }, UI.toggle('Shop nutzt Längenprefix (Fix)', prefix, (v) => (prefix = v)),
-            UI.button('🛒 Bestellung einreichen', () => {
+            UI.button('Bestellung einreichen', () => {
               UI.clear(res);
               try {
                 const m = U.fromHex(msgIn.value), t = U.fromHex(tagIn.value);
@@ -81,7 +81,7 @@
                 let blocks = toBlocks(m);
                 if (prefix) { const L = new Uint8Array(16); L[15] = blocks.length; blocks = [L].concat(blocks); }
                 const ok = U.equal(cbcMac(key, blocks), t);
-                if (ok) { res.append(UI.callout('success', 'Tag akzeptiert!', `Der Shop hält „${U.escape(U.printable(m))}“ für echt.`)); ctx.solve('forge'); }
+                if (ok) { res.append(UI.callout('success', 'Tag akzeptiert', `Der Shop hält „${U.escape(U.printable(m))}“ für echt.`)); ctx.solve('forge'); }
                 else res.append(UI.callout('danger', 'Tag abgelehnt', prefix ? 'Mit Längenprefix funktioniert der Längenangriff nicht mehr.' : 'Prüfe deine Konstruktion m₁ ‖ (m₂ ⊕ t₁).'));
               } catch (e) { res.append(UI.callout('danger', 'Eingabe', e.message)); }
             }, { kind: 'accent' })), res, h('div', { class: 'mt' }, T.xorCalc())));
@@ -96,12 +96,12 @@
 
   // ======================================================================
   KQ.module({
-    id: 'etm', world: 'H', icon: '🔐', title: 'Encrypt-then-MAC & AEAD',
+    id: 'etm', world: 'H', title: 'Encrypt-then-MAC & AEAD',
     short: 'Drei Arten, Verschlüsselung und MAC zu kombinieren – nur eine ist generisch sicher. Dazu Associated Data.',
     keywords: 'encrypt-then-mac encrypt-and-mac mac-then-encrypt aead associated data gcm poly1305 ae',
     challenges: { aead: { title: 'Header umleiten', xp: 50 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.table(['Variante', 'Konstruktion', 'Sicherheit'], [
             ['<b>Encrypt-then-MAC</b>', 'C = Enc(Kₑ, M), T = MAC(Kₘ, C), sende C‖T', '<span class="ok-text">generisch CCA-sicher – immer die richtige Wahl</span>'],
@@ -114,7 +114,7 @@
             UI.lib('L<sub>ae-rand</sub>', ['AE.Enc(M): C ← Σ.C(|M|); D[C] ← M; return C', 'AE.Dec(C): if D[C] defined: return D[C]', '           return err']),
             h('p', null, 'AE kombiniert Vertraulichkeit und Integrität in einem Verfahren; alle AE-Verfahren sind CCA-sicher. ', h('b', null, 'AEAD'), ' erlaubt zusätzlich ', h('b', null, 'Associated Data'), ': öffentlicher, aber integritätsgeschützter Kontext (Paket-Header, Empfänger, Sequenznummer). Beispiele: AES-GCM (GHASH), ChaCha20-Poly1305 (Poly1305 basiert auf der Poly-UHF).')));
       } },
-      { title: '🧪 Labor', render(el) {
+      { title: 'Labor', render(el) {
         const Ke = U.randomBytes(16), Km = U.randomBytes(32);
         let msg = 'JA';
         const out = h('div');
@@ -136,7 +136,7 @@
         el.append(UI.card('Encrypt-and-MAC leakt Gleichheit', UI.input({ value: msg, oninput: (v) => { msg = v; draw(); } }), out));
         draw();
       } },
-      { title: '⚔️ Challenge', render(el, ctx) {
+      { title: 'Challenge', render(el, ctx) {
         const Ke = U.randomBytes(16), Km = U.randomBytes(32);
         const nonce = U.randomBytes(8);
         const ad = U.utf8('an:bob');
@@ -151,7 +151,7 @@
           h('p', null, 'Ein Mailserver stellt Nachrichten anhand des unverschlüsselten Headers zu. Der Inhalt ist verschlüsselt und per MAC geschützt. Ändere den Header auf ', h('code', null, 'an:eve'), ', sodass der Server ihn akzeptiert und an dich ausliefert.'),
           UI.kv([['Header (AD)', 'an:bob'], ['Nonce', U.hex(nonce)], ['Chiffrat', U.hex(c)], ['Tag', mode === 'weak' ? U.hex(tagWeak) : U.hex(tagAead)]]),
           h('div', { class: 'row mt' }, h('span', null, 'Server-Variante:'), UI.segmented([['weak', 'MAC nur über Nonce‖Chiffrat'], ['aead', 'AEAD: MAC auch über Header']], mode, (v) => { mode = v; UI.clear(res); })),
-          h('div', { class: 'row mt' }, UI.field('Header', adIn), UI.button('📨 Zustellen', () => {
+          h('div', { class: 'row mt' }, UI.field('Header', adIn), UI.button('Zustellen', () => {
             UI.clear(res);
             const a = U.utf8(adIn.value);
             const tag = mode === 'weak' ? tagWeak : tagAead;

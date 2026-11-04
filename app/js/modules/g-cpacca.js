@@ -21,12 +21,12 @@
   ];
 
   KQ.module({
-    id: 'indcpa', world: 'G', icon: '🛡️', title: 'IND-CPA & IND-CCA',
+    id: 'indcpa', world: 'G', title: 'IND-CPA & IND-CCA',
     short: 'Sicherheitsdefinitionen als Spiele: Brich ECB, deterministische Verschlüsselung und CBC unter CCA – und scheitere an Encrypt-then-MAC.',
     keywords: 'ind-cpa ind-cca cca1 cca2 chosen plaintext ciphertext spiel real rand ecb cbc etm',
     challenges: { ecb: { title: 'ECB unter CPA brechen', xp: 40 }, det: { title: 'Determinismus ausnutzen', xp: 40 }, cca: { title: 'CBC unter CCA brechen', xp: 70 }, secure: { title: 'Sichere Varianten erleben', xp: 20 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('IND-CPA (Chosen Plaintext Attack)',
             h('div', { class: 'grid c2' }, UI.lib('L<sub>cpa-real</sub>', ['K ← Σ.K', 'CPA.e(M): return Σ.e(K, M)']), UI.lib('L<sub>cpa-rand</sub>', ['CPA.e(M): return C ← Σ.C(|M|)   (zufällig)'])),
@@ -38,7 +38,7 @@
             h('p', null, 'CPA/CCA modellieren bewusst den schlimmsten Fall: Der Angreifer darf frei ver- und entschlüsseln lassen. Wer diesen strengen Test besteht, hält realistischeren Angriffen erst recht stand.'),
             UI.callout('exam', 'Typische Beweise', '<b>ECB nicht CPA-sicher:</b> Real wiederholt sich das Chiffrat bei gleichem Klartext, Rand nie. <b>Deterministisch ⇒ nie CPA-sicher</b> (gilt auch für PKE). <b>CBC nicht CCA-sicher:</b> M ⊕ M′ = C₀ ⊕ C₀′.')));
       } },
-      { title: '⚔️ Spiele', render(el, ctx) {
+      { title: 'Spiele', render(el, ctx) {
         let gi = 0;
         const box = h('div');
         const start = () => {
@@ -61,7 +61,7 @@
               };
               const dec = () => {
                 let C;
-                try { C = U.fromHex(cIn.value); } catch (e) { log('⚠ ' + e.message); return; }
+                try { C = U.fromHex(cIn.value); } catch (e) { log('Fehler: ' + e.message); return; }
                 const key = U.hex(C);
                 if (w.D.has(key)) { log(`d(…) → <i>eigenes Chiffrat</i>: "${U.escape(U.printable(w.D.get(key)))}"`); return; }
                 const r = S.dec(w.K, C);
@@ -72,7 +72,7 @@
             },
             labels: ['Real', 'Zufall'],
             onWin: () => ctx.solve(g.id),
-            onEnd: () => { if (!g.win) { ctx.solve('secure'); UI.toast('So soll es sein', 'Gegen ein sicheres Schema bleibt dein Vorteil ≈ 0.', '🛡️'); } },
+            onEnd: () => { if (!g.win) { ctx.solve('secure'); UI.toast('Spiel beendet', 'Gegen ein sicheres Schema bleibt der Vorteil ≈ 0.'); } },
           });
         };
         el.append(UI.card('Spiel wählen', UI.segmented(GAMES.map((g, i) => [i, g.title]), gi, (v) => { gi = +v; start(); })), box);

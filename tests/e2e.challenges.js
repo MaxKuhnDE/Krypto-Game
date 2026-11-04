@@ -39,7 +39,8 @@ const ok = (name, cond, extra = '') => { console.log(`  ${cond ? '✓' : '✗'} 
   for (const [id, n] of mods) for (let t = 0; t < n; t++) {
     await go(id, t);
     const bad = await page.evaluate(() => [...document.querySelectorAll('.tab-body .callout.danger .co-title')].some((c) => c.textContent.includes('Fehler in dieser Station')));
-    if (bad) { renderErr++; console.log('    Fehler in', id, t); }
+    const stray = await page.evaluate(() => { const w = document.createTreeWalker(document.querySelector('.page'), NodeFilter.SHOW_TEXT); let n; while ((n = w.nextNode())) if (/^(null|undefined|NaN)+$/.test(n.nodeValue.trim())) return true; return false; });
+    if (bad || stray) { renderErr++; console.log('    Problem in', id, t, stray ? '(Text null/undefined/NaN sichtbar)' : ''); }
   }
   ok(`${mods.length} Stationen, alle Tabs ohne Fehler`, renderErr === 0);
 

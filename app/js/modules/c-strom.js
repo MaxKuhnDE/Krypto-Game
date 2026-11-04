@@ -12,12 +12,12 @@
   ];
 
   KQ.module({
-    id: 'otp', world: 'C', icon: '🎟️', title: 'One-Time-Pad & perfekte Sicherheit',
+    id: 'otp', world: 'C', title: 'One-Time-Pad & perfekte Sicherheit',
     short: 'XOR mit echtem Zufall: beweisbar perfekt sicher – bis man den Schlüssel zweimal benutzt.',
     keywords: 'one time pad otp xor perfekt sicher shannon two time pad crib',
     challenges: { reuse: { title: 'Two-Time-Pad brechen', xp: 80 }, shannon: { title: 'Shannon-Experiment', xp: 30 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('Definition',
             UI.formula('c = m ⊕ k          m = c ⊕ k'),
@@ -35,7 +35,7 @@
           UI.callout('danger', 'Schlüssel-Wiederverwendung', 'Wird k zweimal benutzt: c₁ ⊕ c₂ = (m₁ ⊕ k) ⊕ (m₂ ⊕ k) = m₁ ⊕ m₂. Der Schlüssel fällt heraus – mit Sprachstatistik und geratenen Wörtern („Crib Dragging“) lassen sich beide Nachrichten rekonstruieren.'),
           UI.callout('warning', 'Weitere Grenzen', 'Kein Integritäts- oder Authentizitätsschutz (Bits lassen sich gezielt kippen). Unpraktisch: Schlüssel so lang wie die Nachricht, echter Zufall nötig, sicherer Schlüsselaustausch vorab.'));
       } },
-      { title: '🧪 XOR-Werkbank', render(el) {
+      { title: 'XOR-Werkbank', render(el) {
         let msg = 'HALLO', key = U.randomBytes(5);
         const out = h('div'), fake = h('div');
         let fakeMsg = 'HILFE';
@@ -55,14 +55,14 @@
           } else fake.append(h('p', { class: 'muted' }, `Gib einen alternativen Klartext mit genau ${c.length} Byte ein (aktuell ${fm.length}).`));
         };
         el.append(UI.card('Bitweise XOR',
-          h('div', { class: 'row' }, UI.field('Klartext', UI.input({ value: msg, oninput: (v) => { msg = v; draw(); } })), UI.button('🎲 Neuer Schlüssel', () => { key = U.randomBytes(U.utf8(msg).length); draw(); })),
+          h('div', { class: 'row' }, UI.field('Klartext', UI.input({ value: msg, oninput: (v) => { msg = v; draw(); } })), UI.button('Neuer Schlüssel', () => { key = U.randomBytes(U.utf8(msg).length); draw(); })),
           h('div', { class: 'mt' }, out)),
           UI.card('Perfekte Sicherheit zum Anfassen',
             h('p', null, 'Behaupte, c sei die Verschlüsselung eines anderen Klartexts:'),
             UI.input({ value: fakeMsg, oninput: (v) => { fakeMsg = v; draw(); } }), fake));
         draw();
       } },
-      { title: '🧪 Shannon-Experiment', render(el, ctx) {
+      { title: 'Shannon-Experiment', render(el, ctx) {
         // n = 7, l = 2: Verteilung von C für zwei feste Nachrichten
         const n = 7;
         let mode = 'uniform', M = [3, 1], M2 = [0, 0];
@@ -97,10 +97,10 @@
           h('div', { class: 'row' }, UI.segmented([['uniform', 'K uniform & unabhängig'], ['repeat', 'K₂ = K₁ (Wiederholung)'], ['biased', 'K₂ nicht uniform']], mode, (v) => { mode = v; draw(); }),
             UI.button('Neu ziehen', draw, { sm: true })), h('div', { class: 'mt' }, out),
           h('div', { class: 'row mt' }, h('span', null, 'Frage: Welche Bedingung des Satzes verletzt „K₂ = K₁“?'),
-            UI.segmented([['1', '(1) Gleichverteilung'], ['2', '(2) Unabhängigkeit']], null, (v) => { if (v === '2') { ctx.solve('shannon'); UI.toast('Richtig', 'Jedes Kᵢ ist für sich gleichverteilt, aber K₂ hängt von K₁ ab.', '✅'); } else UI.toast('Nicht ganz', 'K₂ = K₁ ist für sich gleichverteilt – das Problem ist die Abhängigkeit.', '❌'); }))));
+            UI.segmented([['1', '(1) Gleichverteilung'], ['2', '(2) Unabhängigkeit']], null, (v) => { if (v === '2') { ctx.solve('shannon'); UI.toast('Richtig', 'Jedes Kᵢ ist für sich gleichverteilt, aber K₂ hängt von K₁ ab.', ''); } else UI.toast('Nicht ganz', 'K₂ = K₁ ist für sich gleichverteilt – das Problem ist die Abhängigkeit.', ''); }))));
         draw();
       } },
-      { title: '⚔️ Challenge: Two-Time-Pad', render(el, ctx) {
+      { title: 'Challenge: Two-Time-Pad', render(el, ctx) {
         const [m1s, m2s, pw] = U.pick(PAIRS);
         const L = Math.min(m1s.length, m2s.length);
         const m1 = U.utf8(m1s.slice(0, L)), m2 = U.utf8(m2s.slice(0, L));
@@ -152,7 +152,7 @@
           UI.card('Rekonstruktion', lines,
             h('div', { class: 'row mt' }, UI.field('Vermutung', crib), UI.field('Position', pos),
               UI.field('in', UI.segmented([[0, 'm₁'], [1, 'm₂']], 1, (v) => (target = +v))),
-              UI.button('🔎 Alle Positionen testen', scan), UI.button('📌 An Position setzen', place, { kind: 'accent' }),
+              UI.button('Alle Positionen testen', scan), UI.button('An Position setzen', place, { kind: 'accent' }),
               UI.button('Leeren', () => { known.forEach((a) => a.fill(null)); draw(); }, { kind: 'subtle' })),
             scanOut,
             h('div', { class: 'mt' }, T.answer('Das Passwort lautet:', (v) => { if (v.toUpperCase() === pw) { ctx.solve('reuse'); return true; } return 'noch nicht'; }, { mono: true, w: 'm' }))));
@@ -169,12 +169,12 @@
 
   // ======================================================================
   KQ.module({
-    id: 'prng', world: 'C', icon: '🎰', title: 'Zufallsgeneratoren & Kongruenzgenerator',
+    id: 'prng', world: 'C', title: 'Zufallsgeneratoren & Kongruenzgenerator',
     short: 'Warum ein linearer Kongruenzgenerator für Stromchiffren tödlich ist – sag die nächste Zahl voraus.',
     keywords: 'zufall rng prng csprng lcg kongruenzgenerator lfsr periode iv seed',
     challenges: { predict: { title: 'Casino-LCG vorhersagen', xp: 60 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('Von OTP zur Stromchiffre',
             h('p', null, 'Idee: Ein kurzer, echt zufälliger Seed (z. B. 128 Bit) wird von einem deterministischen ', h('b', null, 'Schlüsselstromgenerator'), ' zu einem langen Strom expandiert, der wie beim OTP per XOR verwendet wird.'),
@@ -196,7 +196,7 @@
             UI.formula('S₃ − S₂ ≡ A·(S₂ − S₁)  ⇒  A ≡ (S₃ − S₂)·(S₂ − S₁)<sup>−1</sup>,   B ≡ S₂ − A·S₁'),
             h('p', null, 'Damit ist der gesamte Strom vorhersagbar. Auch LFSR-basierte Stromchiffren sind meist unsicher (linear ⇒ Berlekamp-Massey).')));
       } },
-      { title: '🧪 Labor', render(el) {
+      { title: 'Labor', render(el) {
         let A = 1103, B = 12345, o = 4096, seed = 7;
         const out = h('div');
         const draw = () => {
@@ -227,7 +227,7 @@
           out));
         draw();
       } },
-      { title: '⚔️ Challenge', render(el, ctx) {
+      { title: 'Challenge', render(el, ctx) {
         const o = U.pick([10007, 10009, 10037, 10039, 10061]);
         const A = U.randInt(2, o - 1), B = U.randInt(1, o - 1);
         let s = U.randInt(1, o - 1);
@@ -235,7 +235,7 @@
         let S = [nxt(), nxt(), nxt()];
         while (S[1] === S[0]) S = [nxt(), nxt(), nxt()];
         const n4 = (A * S[2] + B) % o, n5 = (A * n4 + B) % o;
-        el.append(UI.card('🎰 Online-Casino „Lucky Modulo“',
+        el.append(UI.card('Online-Casino „Lucky Modulo“',
           h('p', null, `Das Casino erzeugt Lottozahlen mit einem geheimen LCG Sᵢ₊₁ = A·Sᵢ + B mod ${o} (Modul öffentlich, ${o} ist prim). Du hast drei aufeinanderfolgende Ziehungen beobachtet:`),
           h('div', { class: 'row' }, S.map((v, i) => UI.chip(`S${i + 1} = ${v}`, 'accent'))),
           h('p', null, 'Sage die nächsten zwei Ziehungen voraus.'),
@@ -258,12 +258,12 @@
   const RFC_NONCE = U.fromHex('000000090000004a00000000');
 
   KQ.module({
-    id: 'chacha', world: 'C', icon: '💃', title: 'ChaCha20',
+    id: 'chacha', world: 'C', title: 'ChaCha20',
     short: 'ARX-Stromchiffre: 4×4-Zustand, Quarterround, Spalten- und Diagonalrunden – mit RFC-8439-Testvektor.',
     keywords: 'chacha20 salsa20 arx quarterround stromchiffre bernstein nonce',
     challenges: { qr: { title: 'Runden zuordnen', xp: 30 }, nonce: { title: 'Nonce-Reuse ausnutzen', xp: 50 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('Idee',
             h('p', null, 'ChaCha20 (D. J. Bernstein, Nachfolger von Salsa20) ist eine moderne Stromchiffre nach dem ', h('b', null, 'ARX-Prinzip'), ' (Addition mod 2³², Rotation, XOR) – sehr schnell in Software. Ein ', h('b', null, 'Zähler wird „verschlüsselt“'), ', um 512-Bit-Blöcke des Schlüsselstroms zu erzeugen (wie CTR-Modus).')),
@@ -283,7 +283,7 @@
             h('p', null, 'state ← state + Kopie (wortweise mod 2³²). Ohne diese Addition könnte man die (invertierbaren) Runden einfach zurückrechnen und den Schlüssel auslesen. Ergebnis: 64 Byte Schlüsselstrom; cⱼ = mⱼ ⊕ keystreamⱼ. Nächster Block: Zähler + 1.')),
           UI.callout('danger', 'Nonce niemals wiederverwenden', 'Gleicher Schlüssel + gleiche Nonce ⇒ gleicher Schlüsselstrom ⇒ c₁ ⊕ c₂ = m₁ ⊕ m₂ (Two-Time-Pad). In der Praxis meist als AEAD ChaCha20-Poly1305 eingesetzt.'));
       } },
-      { title: '🧪 Runden-Explorer', render(el) {
+      { title: 'Runden-Explorer', render(el) {
         const keyIn = UI.input({ value: U.hex(RFC_KEY), mono: true, w: 'full' });
         const nonceIn = UI.input({ value: U.hex(RFC_NONCE), mono: true, w: 'l' });
         const ctrIn = UI.input({ value: '1', mono: true, w: 's' });
@@ -313,7 +313,7 @@
           UI.field('Schlüssel (32 Byte Hex)', keyIn), h('div', { class: 'row mt' }, UI.field('Nonce (12 Byte Hex)', nonceIn), UI.field('Zähler', ctrIn), UI.button('Berechnen', run, { kind: 'accent' }))), out);
         run();
       } },
-      { title: '🧪 Quarterround', render(el) {
+      { title: 'Quarterround', render(el) {
         const ins = ['11111111', '01020304', '9b8d6f43', '01234567'].map((v) => UI.input({ value: v, mono: true, w: 's' }));
         const out = h('div');
         const run = () => {
@@ -327,7 +327,7 @@
         el.append(UI.card('QR(a, b, c, d) Schritt für Schritt', h('div', { class: 'row' }, ...ins.map((x, i) => UI.field('abcd'[i], x)), UI.button('Berechnen', run, { kind: 'accent' })), out));
         run();
       } },
-      { title: '⚔️ Challenges', render(el, ctx) {
+      { title: 'Challenges', render(el, ctx) {
         const sets = U.shuffle(CC.COLUMN_QR.map((g) => [g, 'S']).concat(CC.DIAG_QR.map((g) => [g, 'D'])));
         const ans = {}; const r1 = h('div');
         const key = U.randomBytes(32), nonce = U.randomBytes(12);

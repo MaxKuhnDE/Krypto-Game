@@ -15,12 +15,12 @@
 
   // ======================================================================
   KQ.module({
-    id: 'signaturen', world: 'L', icon: '✍️', title: 'Digitale Signaturen & EUF-CMA',
+    id: 'signaturen', world: 'L', title: 'Digitale Signaturen & EUF-CMA',
     short: 'Signieren, Verifizieren, das EUF-CMA-Spiel – und warum Textbook-RSA-Signaturen fälschbar sind.',
     keywords: 'signatur euf-cma textbook rsa signatur fälschung homomorph rsa-pss hash-then-sign',
     challenges: { forge: { title: 'Homomorphie-Fälschung', xp: 60 }, existential: { title: 'Existenzielle Fälschung ohne Orakel', xp: 50 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('Signaturverfahren',
             h('p', null, 'Drei Algorithmen: KeyGen() = (sk, vk), Sign(sk, m) = σ, Verify(vk, m, σ) ∈ {✓, ✗}. Korrektheit: Verify(vk, m, Sign(sk, m)) = ✓. Liefert Integrität, Authentizität ', h('b', null, 'und Nichtabstreitbarkeit'), ' (nur der Inhaber von sk kann signieren).')),
@@ -40,7 +40,7 @@
             ], { wrap: false }),
             h('p', null, 'Das gesaltete Hashen zerstört die multiplikative Struktur und reduziert lange Nachrichten auf einen Hash fester Länge.')));
       } },
-      { title: '⚔️ EUF-CMA-Spiel', render(el, ctx) {
+      { title: 'EUF-CMA-Spiel', render(el, ctx) {
         const k = rsa();
         const target = U.pick([42n, 77n, 91n, 143n, 221n]);
         let pss = false;
@@ -73,7 +73,7 @@
               if (!/^\d+$/.test(m)) throw new Error('m als Zahl angeben');
               if (signed.has(m)) { res.append(UI.callout('warning', 'Keine Fälschung', 'Diese Nachricht hat das Orakel signiert ((m, s) ∈ 𝒮).')); return; }
               if (!verify(m, s, r)) { res.append(UI.callout('danger', 'Verify = ✗', pss ? 'Bei PSS hilft die Multiplikation nicht: H(m‖r) hat keine multiplikative Struktur.' : 'Signatur ungültig.')); return; }
-              if (B(m) === target) { res.append(UI.callout('success', 'EUF-CMA gebrochen!', `σ für m* = ${target} gefälscht.`)); ctx.solve('forge'); }
+              if (B(m) === target) { res.append(UI.callout('success', 'EUF-CMA gebrochen', `σ für m* = ${target} gefälscht.`)); ctx.solve('forge'); }
               else if (!signed.size) { res.append(UI.callout('success', 'Existenzielle Fälschung ohne Orakel', 'Gültiges (m, s), ohne je etwas signieren zu lassen.')); ctx.solve('existential'); }
               else res.append(UI.callout('success', 'Gültige Fälschung', 'Auch das bricht EUF-CMA. Versuche noch m* oder eine Fälschung ganz ohne Orakel (Seite neu öffnen).'));
             } catch (e) { res.append(UI.callout('danger', 'Eingabe', e.message)); }
@@ -93,12 +93,12 @@
   const chal = (I, m) => Hn(I.toString() + '|' + m, SG.q);
 
   KQ.module({
-    id: 'schnorr', world: 'L', icon: '🪪', title: 'Schnorr-Protokoll & -Signatur',
+    id: 'schnorr', world: 'L', title: 'Schnorr-Protokoll & -Signatur',
     short: 'Zero-Knowledge-Identifikation: Vollständigkeit, Extraktor, Simulator – und Fiat-Shamir zur Signatur.',
     keywords: 'schnorr identifikation zero knowledge soundness extraktor simulator fiat shamir signatur nonce',
     challenges: { extract: { title: 'Extraktor: x aus zwei Antworten', xp: 50 }, nonce: { title: 'Nonce-Reuse in Signaturen', xp: 60 }, cheat: { title: 'Betrügen ohne x (1 Bit)', xp: 30 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('Protokoll (P kennt x, öffentlich y = gˣ)',
             UI.lib('Schnorr', ['P: k ← ℤ_q, I := gᵏ          ──── I ────▶', '                              ◀──── r ────   V: r ← ℤ_q (Challenge)', 'P: s := k + r·x mod q       ──── s ────▶', '                                             V: prüft gˢ · y⁻ʳ ≟ I'])),
@@ -112,7 +112,7 @@
             UI.lib('Schnorr-Signatur', ['Sign(m, x): k ← ℤ_q; I := gᵏ; r := H(I, m); s := k + r·x; return (I, s)', 'Verify(m, (I, s), y): r := H(I, m); prüfe gˢ · y⁻ʳ ≟ I']),
             UI.callout('danger', 'k muss frisch und geheim sein', 'Zwei Signaturen mit demselben k (gleiches I) für verschiedene m liefern genau die Situation des Extraktors ⇒ x ist sofort berechenbar (vgl. Sony PS3/ECDSA 2010). Auch ein vorhersagbares r (statt H(I, m)) bricht die Sicherheit.')));
       } },
-      { title: '🧪 Protokoll spielen', render(el) {
+      { title: 'Protokoll spielen', render(el) {
         const { p, q, g } = SG;
         const x = NT.randBetween(2n, q - 1n), y = NT.modPow(g, x, p);
         const out = h('div');
@@ -134,7 +134,7 @@
         el.append(UI.card('Du bist der Verifier', UI.kv([['Gruppe', `p = ${p}, q = ${q}, g = ${g} (Ordnung q)`], ['y = gˣ', String(y)]]), h('div', { class: 'mt' }, out)));
         start();
       } },
-      { title: '🧪 Simulator', render(el) {
+      { title: 'Simulator', render(el) {
         const { p, q, g } = SG;
         const x = NT.randBetween(2n, q - 1n), y = NT.modPow(g, x, p);
         const real = [], sim = [];
@@ -149,7 +149,7 @@
           h('div', { class: 'grid c2' }, h('div', null, h('h4', null, 'Echt (mit x)'), tbl(real)), h('div', null, h('h4', null, 'Simuliert (ohne x!)'), tbl(sim))),
           UI.callout('info', 'Warum ist das Zero-Knowledge?', 'In beiden Fällen sind r und s gleichverteilt und I ist durch gˢy⁻ʳ = I bestimmt – die Verteilungen sind identisch. Was der Verifier sieht, hätte er sich selbst erzeugen können. Achtung: Der Simulator wählt r <i>vor</i> I – deshalb überzeugt er keinen echten Verifier.')));
       } },
-      { title: '⚔️ Challenges', render(el, ctx) {
+      { title: 'Challenges', render(el, ctx) {
         const { p, q, g } = SG;
         const x = NT.randBetween(2n, q - 1n), y = NT.modPow(g, x, p);
         const k = NT.randBetween(1n, q - 1n), I = NT.modPow(g, k, p);
@@ -172,7 +172,7 @@
           const ok = r === rh; if (ok) wins++;
           UI.clear(cheatOut);
           cheatOut.append(h('div', { class: 'msg' }, `Du sendest I = gˢ·y^(−${rh}) = ${Ic}; V wählt r = ${r}`),
-            UI.callout(ok ? 'success' : 'danger', ok ? 'V akzeptiert (Glück gehabt)' : 'Erwischt – ohne x kannst du nicht antworten', `Bilanz: ${wins}/${played} – erwartet 50 %. Mit r ∈ ℤ_q wären es nur 1/q ≈ ${(1 / Number(q)).toFixed(4)}; t Wiederholungen mit 1-Bit-Challenges: 2⁻ᵗ.`));
+            UI.callout(ok ? 'success' : 'danger', ok ? 'V akzeptiert (Challenge richtig vorhergesagt)' : 'V lehnt ab – ohne x keine passende Antwort', `Bilanz: ${wins}/${played} – erwartet 50 %. Mit r ∈ ℤ_q wären es nur 1/q ≈ ${(1 / Number(q)).toFixed(4)}; t Wiederholungen mit 1-Bit-Challenges: 2⁻ᵗ.`));
           if (ok) ctx.solve('cheat');
         };
         el.append(
@@ -188,7 +188,7 @@
             h('div', { class: 'row' }, guessIn, UI.button('Runde spielen', play, { kind: 'accent' })), cheatOut),
           T.calculator());
       } },
-      { title: '🧪 Signatur', render(el) {
+      { title: 'Signatur', render(el) {
         const { p, q, g } = SG;
         const x = NT.randBetween(2n, q - 1n), y = NT.modPow(g, x, p);
         let m = 'Hallo Schnorr';

@@ -9,12 +9,12 @@
 
   // ======================================================================
   KQ.module({
-    id: 'polyuhf', world: 'J', icon: '📐', title: 'Universelle Hashfunktionen & Poly-UHF',
+    id: 'polyuhf', world: 'J', title: 'Universelle Hashfunktionen & Poly-UHF',
     short: 'Geheimer Schlüssel statt öffentlichem Salt: UHF, UH-PRF, und warum ein Polynom höchstens d Nullstellen hat.',
     keywords: 'uhf universelle hashfunktion poly-uhf poly1305 ghash gcm nullstellen fundamentalsatz uh-prf',
     challenges: { root: { title: 'Kollisionsschlüssel finden', xp: 50 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('Definition',
             h('p', null, 'U: {0,1}^κ × {0,1}* → {0,1}ⁿ ist eine ', h('b', null, 'universelle Hashfunktion'), ', wenn für alle X ≠ X′ gilt: Pr[U(K, X) = U(K, X′)] ist vernachlässigbar (K zufällig). Anders als bei CRHFs ist K hier ', h('b', null, 'geheim'), ' – der Angreifer wählt X, X′, ohne K zu kennen.'),
@@ -31,7 +31,7 @@
             h('p', null, 'U(K, M) = U(K, M′) ⟺ K ist Nullstelle des Differenzpolynoms Δ(X) = Q(X) − Q′(X) ≢ 0 vom Grad ≤ d. Fundamentalsatz: Für p prim hat ein Polynom vom Grad d höchstens d Nullstellen mod p ⇒ höchstens d der p Schlüssel führen zur Kollision. ∎'),
             UI.callout('exam', 'Praxis', 'Poly1305 (p = 2¹³⁰ − 5) in ChaCha20-Poly1305 und GHASH (über 𝔽₂¹²⁸) in AES-GCM beruhen auf diesem Prinzip. p muss prim sein – sonst gibt es Nullteiler und viel mehr „Nullstellen“.')));
       } },
-      { title: '🧪 Labor', render(el) {
+      { title: 'Labor', render(el) {
         let p = 101, M = '3, 14, 15', M2 = '9, 26, 53';
         const out = h('div');
         const draw = () => {
@@ -50,7 +50,7 @@
             UI.field('M′', UI.input({ value: M2, w: 'm', oninput: (v) => { M2 = v; draw(); } }))), out));
         draw();
       } },
-      { title: '⚔️ Challenge', render(el, ctx) {
+      { title: 'Challenge', render(el, ctx) {
         const p = 101;
         const M = [U.randInt(0, 100), U.randInt(0, 100), U.randInt(0, 100)];
         const M2 = [M[0], U.randInt(0, 100), U.randInt(0, 100)];
@@ -75,12 +75,12 @@
 
   // ======================================================================
   KQ.module({
-    id: 'ideal', world: 'J', icon: '🧽', title: 'Random Oracle, Even-Mansour & Sponge',
+    id: 'ideal', world: 'J', title: 'Random Oracle, Even-Mansour & Sponge',
     short: 'Idealisierte Beweismodelle: Lazy-Sampling-Orakel, Blockchiffre aus einer Permutation, SHA-3-Prinzip.',
     keywords: 'random oracle ideal permutation even mansour prince sponge duplex sha-3 keccak rate capacity',
     challenges: { rocoll: { title: 'RO-Kollision (12 Bit)', xp: 40 }, emkey: { title: 'Even-Mansour-Schlüssel', xp: 50 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('Random-Oracle-Modell',
             UI.lib('H(A)', ['if H[A] undefined: H[A] ← {0,1}ⁿ', 'return H[A]']),
@@ -94,7 +94,7 @@
             h('p', null, 'Zustand = r Bit ', h('b', null, 'rate'), ' (Ein-/Ausgabe per XOR) + c Bit ', h('b', null, 'capacity'), ' (nie direkt sichtbar). Absorbing: Block in die rate XORen, dann f auf den ganzen Zustand. Squeezing: rate ausgeben, f, wieder ausgeben …'),
             h('p', null, 'Ist f eine ideale Permutation, ist nur eine Kollision in der capacity eine Abweichung ⇒ Sponge ≈ Random Oracle (bis ≈ 2^(c/2)) ⇒ gleichzeitig PRG, PRF und CRHF. Der ', h('b', null, 'Duplex'), '-Modus erweitert das um Schlüsselabsorption, Verschlüsselung und Tag-Erzeugung: AEAD aus einer einzigen Permutation.')));
       } },
-      { title: '🧪 Random Oracle', render(el, ctx) {
+      { title: 'Random Oracle', render(el, ctx) {
         const table = new Map(); const rev = new Map();
         const inp = UI.input({ value: 'hallo', w: 'm' });
         const out = h('div'), found = h('div');
@@ -112,12 +112,12 @@
           return table.get(a);
         };
         el.append(UI.card('Lazy Sampling live',
-          h('div', { class: 'row' }, inp, UI.button('H(A) abfragen', () => { const v = q(inp.value); UI.toast('H(„' + inp.value + '“)', '0x' + v.toString(16).padStart(3, '0'), '🎲', 1500); draw(); }, { kind: 'accent' }),
+          h('div', { class: 'row' }, inp, UI.button('H(A) abfragen', () => { const v = q(inp.value); UI.toast('H(„' + inp.value + '“)', '0x' + v.toString(16).padStart(3, '0'), '', 1500); draw(); }, { kind: 'accent' }),
             UI.button('+10 zufällige Anfragen', () => { for (let i = 0; i < 10; i++) q('x' + U.randInt(0, 1e9)); draw(); })),
           h('p', { class: 'small muted' }, 'Gleiche Eingabe ⇒ gleiche Antwort (konsistent). Neue Eingabe ⇒ frischer Zufallswert. Challenge: Provoziere eine Kollision.'), found, out));
         draw();
       } },
-      { title: '🧪 Even-Mansour', render(el, ctx) {
+      { title: 'Even-Mansour', render(el, ctx) {
         const P = TOY.randomPerm(8, 4242);
         const K = U.randInt(0, 255);
         const E = TOY.evenMansour(P, K);
@@ -128,7 +128,7 @@
         const bf = h('div');
         el.append(UI.card('8-Bit-Even-Mansour mit öffentlicher Permutation Π',
           h('p', null, 'Π ist öffentlich (Tabelle unten). Du kennst zwei Klartext-Chiffrat-Paare: ', h('code', null, `F(${U.hex8(x1)}) = ${U.hex8(y1)}`), ', ', h('code', null, `F(${U.hex8(x2)}) = ${U.hex8(y2)}`), '. Finde K.'),
-          h('div', { class: 'row' }, UI.button('🔁 Alle 256 Schlüsselkandidaten testen', () => {
+          h('div', { class: 'row' }, UI.button('Alle 256 Schlüsselkandidaten testen', () => {
             UI.clear(bf);
             const cands = [];
             for (let k = 0; k < 256; k++) { tries++; if ((P.fwd(k ^ x1) ^ k) === y1 && (P.fwd(k ^ x2) ^ k) === y2) cands.push(k); }
@@ -137,7 +137,7 @@
           T.answer('K = 0x', (v) => { if (parseInt(v, 16) === K) { ctx.solve('emkey'); return true; } return 'nein'; }),
           h('details', { class: 'mt' }, h('summary', null, 'Π-Tabelle anzeigen'), UI.bytes(P.table, { cols: 16, title: (i, v) => `Π(0x${U.hex8(i)}) = 0x${U.hex8(v)}` })), res));
       } },
-      { title: '🧪 Sponge', render(el) {
+      { title: 'Sponge', render(el) {
         const P = TOY.randomPerm(16, 777);
         let r = 8, msg = 'Hi!';
         const out = h('div');

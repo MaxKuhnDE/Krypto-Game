@@ -45,16 +45,17 @@
     })));
     return { W, H, px };
   };
-  const PALETTE = [[235, 240, 248], [0, 95, 184], [196, 43, 28], [60, 60, 70]];
+  const PALETTE = [[246, 247, 245], [31, 110, 67], [27, 28, 26], [120, 125, 118]];
   const drawImg = (bytes, W, H, mode) => {
     const cv = h('canvas', { width: W, height: H, class: 'pixel-canvas', style: { width: '256px', height: '128px' } });
     const ctx = cv.getContext('2d');
     const img = ctx.createImageData(W, H);
     for (let i = 0; i < W * H; i++) {
       const v = bytes[i];
-      // Chiffrat: Farbe je 16-Byte-Block aus dessen ersten drei Bytes – gleiche Blöcke ⇒ gleiche Farbe
+      // Chiffrat: Grauwert je 16-Byte-Block aus dessen erstem Byte – gleiche Blöcke ⇒ gleicher Grauwert
       const blk = i - (i % 16);
-      const [r, g, b] = mode === 'plain' ? PALETTE[v] : [bytes[blk], bytes[blk + 1], bytes[blk + 2]];
+      const gray = 40 + Math.round((bytes[blk] / 255) * 190);
+      const [r, g, b] = mode === 'plain' ? PALETTE[v] : [gray, gray, gray];
       img.data.set([r, g, b, 255], i * 4);
     }
     ctx.putImageData(img, 0, 0);
@@ -63,12 +64,12 @@
 
   // ======================================================================
   KQ.module({
-    id: 'modi', world: 'E', icon: '⛓️', title: 'ECB, CBC, CTR & Padding',
+    id: 'modi', world: 'E', title: 'ECB, CBC, CTR & Padding',
     short: 'Das „ECB-Bild“, PKCS#7-Padding und wie sich Bitfehler in jedem Modus fortpflanzen.',
     keywords: 'betriebsmodi ecb cbc ctr padding pkcs7 iv nonce fehlerfortpflanzung',
     challenges: { ecb: { title: 'ECB-Chiffrat erkennen', xp: 30 }, padding: { title: 'Padding bestimmen', xp: 30 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('ECB – Electronic Codebook', modeSvg('ECB'), h('p', null, 'cᵢ = E(k, mᵢ). Jeder Block unabhängig. ', h('b', { class: 'bad-text' }, 'Unsicher:'), ' gleicher Klartextblock ⇒ gleicher Chiffratblock – Muster bleiben sichtbar.')),
           UI.card('CBC – Cipher Block Chaining', modeSvg('CBC'), h('p', null, 'cᵢ = E(k, cᵢ₋₁ ⊕ mᵢ), c₀ = IV (zufällig!). Gleiche Klartexte ⇒ verschiedene Chiffrate. Braucht Padding. Verschlüsselung sequentiell, Entschlüsselung parallelisierbar.')),
@@ -83,7 +84,7 @@
           UI.card('Padding (PKCS#7-artig)',
             h('p', null, 'Hat der letzte Block m Bytes (0 < m ≤ 16), werden n = 16 − m Bytes mit dem Wert n angehängt, z. B. 3 fehlende Bytes → ', h('code', null, '03 03 03'), '. Ist der letzte Block voll, wird ein ', h('b', null, 'ganzer Padding-Block 16 × 0x10'), ' angehängt – sonst wäre das Entfernen mehrdeutig.')));
       } },
-      { title: '🧪 Bild verschlüsseln', render(el) {
+      { title: 'Bild verschlüsseln', render(el) {
         const { W, H, px } = makeImage();
         const key = U.randomBytes(16), iv = U.randomBytes(16), nonce = U.randomBytes(8);
         const ecb = AES.ecbEncrypt(key, px, false), cbc = AES.cbcEncrypt(key, iv, px, false), ctr = AES.ctr(key, nonce, px);
@@ -91,13 +92,13 @@
         el.append(UI.card('Dasselbe Bild mit AES-128 in drei Modi',
           h('div', { class: 'grid c2', style: { justifyItems: 'center' } },
             cell('Klartext', drawImg(px, W, H, 'plain'), '256×128, 1 Byte/Pixel'),
-            cell('ECB', drawImg(ecb, W, H), 'Umrisse bleiben sichtbar!'),
+            cell('ECB', drawImg(ecb, W, H), 'Umrisse bleiben sichtbar'),
             cell('CBC', drawImg(cbc, W, H), 'Rauschen'),
             cell('CTR', drawImg(ctr, W, H), 'Rauschen')),
-          h('p', { class: 'small muted' }, 'Darstellung der Chiffrate: Jeder 16-Byte-Block (= 16 Pixel einer Zeile) wird in einer Farbe gezeichnet, die aus seinen Bytes abgeleitet ist. Identische Chiffratblöcke erscheinen also in identischer Farbe.'),
+          h('p', { class: 'small muted' }, 'Darstellung der Chiffrate: Jeder 16-Byte-Block (= 16 Pixel einer Zeile) wird in einem Grauwert gezeichnet, der aus seinem ersten Byte abgeleitet ist. Identische Chiffratblöcke erscheinen also im identischen Grauwert.'),
           UI.callout('info', 'Warum?', 'Ein AES-Block umfasst 16 nebeneinanderliegende Pixel. Einfarbige Flächen ergeben identische Klartextblöcke – und in ECB identische Chiffratblöcke. Die Struktur des Bildes überlebt die „Verschlüsselung“.')));
       } },
-      { title: '🧪 Padding & Fehlerfortpflanzung', render(el) {
+      { title: 'Padding & Fehlerfortpflanzung', render(el) {
         let txt = 'Kryptografie macht Spass!';
         const padOut = h('div');
         const drawPad = () => {
@@ -126,7 +127,7 @@
             errOut, h('p', { class: 'small muted mt' }, 'Rot = verfälschte Bytes. In CBC wird Block i unlesbar, in Block i+1 kippt genau das entsprechende Bit – das ist die Grundlage des Bitflip-Angriffs.')));
         drawPad(); drawErr();
       } },
-      { title: '⚔️ Challenges', render(el, ctx) {
+      { title: 'Challenges', render(el, ctx) {
         const key = U.randomBytes(16);
         const ecbIdx = U.randInt(0, 3);
         const base = U.utf8('ANGRIFF UM 06:00ANGRIFF UM 06:00RUECKZUG UM 0900ANGRIFF UM 06:00');
@@ -168,12 +169,12 @@
   // ======================================================================
   const AMOUNT_BLOCK = 'BETRAG:00010 EUR';
   KQ.module({
-    id: 'bitflip', world: 'E', icon: '💸', title: 'Malleability: CBC- & CTR-Bitflipping',
+    id: 'bitflip', world: 'E', title: 'Malleability: CBC- & CTR-Bitflipping',
     short: 'Ohne Schlüssel den Klartext gezielt ändern: M ⊕ M′ = C₀ ⊕ C₀′ – Verschlüsselung ist kein Integritätsschutz.',
     keywords: 'malleability manipulierbar bitflip cbc ctr integrität iv',
     challenges: { amount: { title: 'Überweisung manipulieren (CBC)', xp: 60 }, ctr: { title: 'Rolle ändern (CTR)', xp: 40 } },
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('CBC ist malleable',
             h('p', null, 'C = C₀‖C₁ verschlüsselt M (C₀ = IV). Ändert man nur C₀ zu C₀′ und lässt entschlüsseln:'),
@@ -184,7 +185,7 @@
             h('p', null, 'Bit für Bit, ohne Kollateralschaden.')),
           UI.callout('exam', 'Konsequenz', 'CBC/CTR sind CPA-, aber nicht CCA-sicher. Gegen Manipulation hilft nur Integritätsschutz: Encrypt-then-MAC oder AEAD (GCM, ChaCha20-Poly1305).'));
       } },
-      { title: '⚔️ Challenge: Bank', render(el, ctx) {
+      { title: 'Challenge: Bank', render(el, ctx) {
         const key = U.randomBytes(16), iv = U.randomBytes(16);
         const plain = U.utf8(AMOUNT_BLOCK + 'EMPF:EVE;ID=4711');
         const ct = AES.cbcEncrypt(key, iv, plain);
@@ -195,7 +196,7 @@
           UI.clear(ivInputs);
           ivEdit.forEach((b, i) => {
             const inp = h('input', { class: 'input mono', value: U.hex8(b), maxlength: 2, style: { width: '38px', padding: '3px', textAlign: 'center', minHeight: '28px' } });
-            if (b !== iv[i]) inp.style.background = 'var(--warning-bg)';
+            if (b !== iv[i]) inp.style.background = 'var(--c-hi-bg)';
             inp.addEventListener('change', () => { const v = parseInt(inp.value, 16); if (!isNaN(v) && v >= 0 && v < 256) ivEdit[i] = v; drawInputs(); });
             ivInputs.append(inp);
           });
@@ -207,17 +208,17 @@
           const s = U.printable(d.plain);
           const m = /^BETRAG:(\d{5}) EUR/.exec(s);
           res.append(UI.callout(m ? 'info' : 'warning', 'Bank entschlüsselt:', `<code>${U.escape(s)}</code>` + (m ? `<br>Überweise <b>${+m[1]} EUR</b> an EVE.` : '<br>Format ungültig – abgelehnt.')));
-          if (m && +m[1] === 99999) { res.append(UI.callout('success', 'Erfolg!', 'Ohne den Schlüssel zu kennen, hast du den Betrag auf 99999 EUR gesetzt.')); ctx.solve('amount'); }
+          if (m && +m[1] === 99999) { res.append(UI.callout('success', 'Betrag geändert', 'Ohne den Schlüssel zu kennen, hast du den Betrag auf 99999 EUR gesetzt.')); ctx.solve('amount'); }
         };
         drawInputs();
-        el.append(UI.card('Mallorys Werkbank',
+        el.append(UI.card('Ausgangslage',
           h('p', null, 'Eve hat eine Überweisung über 10 EUR an sich selbst ausgelöst. Das Format der Bank ist öffentlich: Block 1 = ', h('code', null, AMOUNT_BLOCK), '. Die Nachricht geht als IV‖C an die Bank. Ziel: Die Bank soll ', h('b', null, 'BETRAG:99999 EUR'), ' lesen.'),
           UI.kv([['Chiffrat C', U.hex(ct, ' ')]]),
           h('h4', null, 'IV (editierbar, Hex pro Byte)'), ivInputs,
-          h('div', { class: 'row mt' }, UI.button('📨 An die Bank senden', send, { kind: 'accent' }), UI.button('IV zurücksetzen', () => { ivEdit.set(iv); drawInputs(); UI.clear(res); }, { kind: 'subtle' })),
+          h('div', { class: 'row mt' }, UI.button('An die Bank senden', send, { kind: 'accent' }), UI.button('IV zurücksetzen', () => { ivEdit.set(iv); drawInputs(); UI.clear(res); }, { kind: 'subtle' })),
           res, h('div', { class: 'grid c2 mt' }, T.xorCalc(), UI.callout('tip', 'Hinweis', 'IV′ = IV ⊕ M ⊕ M′. Im XOR-Rechner kannst du Text in Anführungszeichen eingeben, z. B. "BETRAG:00010 EUR".'))));
       } },
-      { title: '⚔️ Challenge: CTR', render(el, ctx) {
+      { title: 'Challenge: CTR', render(el, ctx) {
         const key = U.randomBytes(16), nonce = U.randomBytes(8);
         const m = 'name=eve;rolle=user;exp=2030';
         const c = AES.ctr(key, nonce, U.utf8(m));
@@ -226,12 +227,12 @@
         el.append(UI.card('Session-Token in CTR',
           h('p', null, 'Der Server speichert das Token ', h('code', null, m), ' AES-CTR-verschlüsselt im Cookie (ohne MAC). Ändere das Chiffrat so, dass der Server ', h('code', null, 'rolle=root'), ' liest.'),
           UI.field('Cookie (Hex)', cIn),
-          h('div', { class: 'row mt' }, UI.button('🍪 Cookie senden', () => {
+          h('div', { class: 'row mt' }, UI.button('Cookie senden', () => {
             UI.clear(res);
             try {
               const d = U.printable(AES.ctr(key, nonce, U.fromHex(cIn.value)));
               res.append(UI.callout('info', 'Server liest:', `<code>${U.escape(d)}</code>`));
-              if (d.includes('rolle=root;')) { res.append(UI.callout('success', 'Root!', 'Vier Bytes per XOR geändert – ohne Schlüssel.')); ctx.solve('ctr'); }
+              if (d.includes('rolle=root;')) { res.append(UI.callout('success', 'Rolle geändert', 'Vier Bytes per XOR geändert – ohne Schlüssel.')); ctx.solve('ctr'); }
             } catch (e) { res.append(UI.callout('danger', 'Fehler', e.message)); }
           }, { kind: 'accent' })), res,
           h('div', { class: 'mt' }, T.xorCalc()),
@@ -246,11 +247,11 @@
 
   // ======================================================================
   KQ.module({
-    id: 'paddingoracle', world: 'E', icon: '🔮', title: 'Padding-Oracle-Angriff',
+    id: 'paddingoracle', world: 'E', title: 'Padding-Oracle-Angriff',
     short: 'Eine Fehlermeldung „Padding falsch“ genügt, um CBC byteweise ohne Schlüssel zu entschlüsseln.',
     keywords: 'padding oracle cbc pkcs7 fehlermeldung vaudenay imessage gzip',
     tabs: [
-      { title: '📖 Verstehen', render(el) {
+      { title: 'Verstehen', render(el) {
         el.append(
           UI.card('Das Orakel',
             h('p', null, 'Ein Server entschlüsselt CBC-Nachrichten und meldet (direkt oder über Laufzeit/Fehlercode), ', h('b', null, 'ob das Padding korrekt war'), '. Mehr braucht der Angreifer nicht.')),
