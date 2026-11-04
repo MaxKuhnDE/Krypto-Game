@@ -5,6 +5,11 @@ on:
     branches: [main]
     tags: ['v*']
   workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Versions-Tag für ein Release, z. B. v1.0.0 (leer = nur bauen)'
+        required: false
+        default: ''
 
 permissions:
   contents: write
@@ -48,12 +53,14 @@ jobs:
             dist/SHA256SUMS.txt
           if-no-files-found: error
 
-      - name: Release anlegen (nur bei Tags v*)
-        if: startsWith(github.ref, 'refs/tags/v')
+      - name: Release anlegen (bei Tags v* oder manuell mit release_tag)
+        if: startsWith(github.ref, 'refs/tags/v') || inputs.release_tag != ''
         uses: softprops/action-gh-release@v2
         with:
-          name: KryptoQuest ${{ github.ref_name }}
-          body_path: docs/release-notes/${{ github.ref_name }}.md
+          tag_name: ${{ inputs.release_tag || github.ref_name }}
+          target_commitish: ${{ github.sha }}
+          name: KryptoQuest ${{ inputs.release_tag || github.ref_name }}
+          body_path: docs/release-notes/${{ inputs.release_tag || github.ref_name }}.md
           files: |
             dist/*.exe
             dist/SHA256SUMS.txt
