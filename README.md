@@ -86,7 +86,6 @@ In den jeweiligen Stationen als „Erratum“ markiert:
 
 - **Lernzweck:** Die Implementierungen sind nicht konstant‑zeit und nutzen absichtlich kleine Parameter (8/16‑Bit‑Blöcke, p = 23 …). Nicht für echte Geheimnisse verwenden.
 - **Padding‑Oracle:** Die Station erklärt Angriff, Formel und Gegenmaßnahmen, enthält aber kein interaktives Angriffswerkzeug.
-- Die Windows‑Oberfläche wurde unter Linux in Chromium und in Electron (Xvfb) getestet, nicht auf einem echten Windows‑11‑Rechner. Die nativen Fensterknöpfe und Mica sind daher ungetestet; Mica ist deshalb standardmäßig aus.
 - Die App ersetzt nicht das Skript – sie ist ein Übungs‑ und Verständniswerkzeug.
 
 ## Entstehung
