@@ -88,3 +88,7 @@ In den jeweiligen Stationen als „Erratum“ markiert:
 - **Padding‑Oracle:** Die Station erklärt Angriff, Formel und Gegenmaßnahmen, enthält aber kein interaktives Angriffswerkzeug.
 - Die Windows‑Oberfläche wurde unter Linux in Chromium und in Electron (Xvfb) getestet, nicht auf einem echten Windows‑11‑Rechner. Die nativen Fensterknöpfe und Mica sind daher ungetestet; Mica ist deshalb standardmäßig aus.
 - Die App ersetzt nicht das Skript – sie ist ein Übungs‑ und Verständniswerkzeug.
+
+## Entstehung
+
+Das Lernspiel ist als Begleitmaterial zur Vorlesung Kryptografie entstanden. Diese Dokumentation wurde mit Hilfe von Claude (Anthropic) erstellt.
