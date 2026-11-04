@@ -1,0 +1,53 @@
+{
+  "name": "kryptoquest",
+  "productName": "KryptoQuest",
+  "version": "1.0.0",
+  "description": "Interaktives Lernspiel zur Vorlesung Kryptografie – alle Verfahren zum Anfassen (Windows-11-App).",
+  "main": "main.js",
+  "private": true,
+  "author": "MaxKuhnDE",
+  "scripts": {
+    "start": "electron .",
+    "test": "node tests/crypto.test.js",
+    "dist:win": "electron-builder --win nsis portable --publish never",
+    "pack:win": "electron-builder --win dir --publish never"
+  },
+  "devDependencies": {
+    "electron": "44.9.0",
+    "electron-builder": "26.17.0"
+  },
+  "build": {
+    "appId": "de.kryptoquest.app",
+    "productName": "KryptoQuest",
+    "copyright": "Lernprojekt zur Vorlesung Kryptografie",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "app/**/*",
+      "build/icon.png"
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "build/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "KryptoQuest",
+      "artifactName": "KryptoQuest-Setup-${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "KryptoQuest-${version}-portable.${ext}"
+    }
+  }
+}

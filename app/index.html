@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'none'; object-src 'none'; base-uri 'none'">
+  <title>KryptoQuest</title>
+  <link rel="icon" href="assets/icon.svg">
+  <link rel="stylesheet" href="css/fluent.css">
+</head>
+<body>
+  <header class="titlebar">
+    <button class="icon-btn" id="btn-nav" title="Navigation ein-/ausblenden" aria-label="Navigation">☰</button>
+    <img class="app-icon" src="assets/icon.svg" alt="">
+    <div class="app-title"><b>KryptoQuest</b> · Kryptografie interaktiv</div>
+    <div class="tb-spacer"></div>
+    <div class="tb-xp" id="tb-xp"></div>
+  </header>
+  <div class="shell">
+    <nav class="nav" id="nav" aria-label="Navigation"></nav>
+    <main class="content" id="content"></main>
+  </div>
+
+  <!-- Krypto-Kern (echte Implementierungen, getestet in tests/crypto.test.js) -->
+  <script src="js/crypto/util.js"></script>
+  <script src="js/crypto/aes.js"></script>
+  <script src="js/crypto/sha256.js"></script>
+  <script src="js/crypto/chacha20.js"></script>
+  <script src="js/crypto/simon.js"></script>
+  <script src="js/crypto/numth.js"></script>
+  <script src="js/crypto/ec.js"></script>
+  <script src="js/crypto/toys.js"></script>
+  <!-- App-Kern -->
+  <script src="js/core/ui.js"></script>
+  <script src="js/core/state.js"></script>
+  <script src="js/core/app.js"></script>
+  <script src="js/core/tools.js"></script>
+  <!-- Stationen, nach Welten -->
+  <script src="js/modules/a-algebra.js"></script>
+  <script src="js/modules/b-grundlagen.js"></script>
+  <script src="js/modules/c-strom.js"></script>
+  <script src="js/modules/d-block.js"></script>
+  <script src="js/modules/e-modi.js"></script>
+  <script src="js/modules/f-beweise.js"></script>
+  <script src="js/modules/g-cpacca.js"></script>
+  <script src="js/modules/h-mac.js"></script>
+  <script src="js/modules/i-hash.js"></script>
+  <script src="js/modules/j-ideal.js"></script>
+  <script src="js/modules/k-asym.js"></script>
+  <script src="js/modules/l-sig.js"></script>
+  <script src="js/modules/n-arena.js"></script>
+  <script src="js/boot.js"></script>
+</body>
+</html>
